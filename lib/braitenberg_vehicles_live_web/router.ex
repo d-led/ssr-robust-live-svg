@@ -17,7 +17,7 @@ defmodule BraitenbergVehiclesLiveWeb.Router do
   scope "/", BraitenbergVehiclesLiveWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", WorldLive, :index
   end
 
   # Other scopes may use custom stacks.
