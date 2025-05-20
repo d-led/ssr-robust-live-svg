@@ -1,22 +1,31 @@
 defmodule BraitenbergVehiclesLiveWeb.WorldLive do
+  alias BraitenbergVehiclesLive.Ball
   use BraitenbergVehiclesLiveWeb, :live_view
 
-  @width 800
-  @height 600
-  @radius 20
-
   def mount(_params, _session, socket) do
+    config =
+      Keyword.merge(
+        Application.get_env(:braitenberg_vehicles_live, :cell, []),
+        Application.get_env(:braitenberg_vehicles_live, :ball, [])
+      )
+
+    width = Keyword.get(config, :width)
+    height = Keyword.get(config, :height)
+    radius = Keyword.get(config, :radius)
+
     if connected?(socket) do
       Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "coordinates:ball")
     end
 
+    {cx, cy} = Ball.get_coordinates()
+
     {:ok,
      assign(socket,
-       cx: 400,
-       cy: 300,
-       width: @width,
-       height: @height,
-       radius: @radius
+       cx: cx,
+       cy: cy,
+       width: width,
+       height: height,
+       radius: radius
      )}
   end
 

@@ -10,6 +10,12 @@ import Config
 config :braitenberg_vehicles_live,
   generators: [timestamp_type: :utc_datetime]
 
+config :braitenberg_vehicles_live, :cell,
+  width: 800,
+  height: 600
+
+config :braitenberg_vehicles_live, :ball, radius: 20
+
 # Configures the endpoint
 config :braitenberg_vehicles_live, BraitenbergVehiclesLiveWeb.Endpoint,
   url: [host: "localhost"],

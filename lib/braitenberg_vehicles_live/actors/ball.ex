@@ -1,32 +1,35 @@
 defmodule BraitenbergVehiclesLive.Ball do
   use GenServer
 
-  @width 800
-  @height 600
-  @radius 20
   @interval 30
 
-  def start_link(_opts) do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  def init(_) do
+  def init(opts) do
+    width = Keyword.get(opts, :width)
+    height = Keyword.get(opts, :height)
+    radius = Keyword.get(opts, :radius)
+
     state = %{
-      cx: 400,
-      cy: 300,
+      # Initial x-pos
+      cx: div(width, 2),
+      # Initial y-pos
+      cy: div(height, 2),
       dx: 4,
       dy: 3,
-      width: @width,
-      height: @height,
-      radius: @radius
+      width: width,
+      height: height,
+      radius: radius
     }
 
     schedule_tick()
     {:ok, state}
   end
 
-  # API for later initial rendering
-  def get_coordinates do
+  # API
+  def get_coordinates() do
     GenServer.call(__MODULE__, :get_coordinates)
   end
 
@@ -40,21 +43,21 @@ defmodule BraitenbergVehiclesLive.Ball do
     {:noreply, new_state}
   end
 
-  defp move_ball(%{cx: cx, cy: cy, dx: dx, dy: dy}) do
+  defp move_ball(%{cx: cx, cy: cy, dx: dx, dy: dy, width: width, height: height, radius: radius}) do
     next_cx = cx + dx
     next_cy = cy + dy
 
     new_dx =
       cond do
-        next_cx - @radius <= 0 and dx < 0 -> -dx
-        next_cx + @radius >= @width and dx > 0 -> -dx
+        next_cx - radius <= 0 and dx < 0 -> -dx
+        next_cx + radius >= width and dx > 0 -> -dx
         true -> dx
       end
 
     new_dy =
       cond do
-        next_cy - @radius <= 0 and dy < 0 -> -dy
-        next_cy + @radius >= @height and dy > 0 -> -dy
+        next_cy - radius <= 0 and dy < 0 -> -dy
+        next_cy + radius >= height and dy > 0 -> -dy
         true -> dy
       end
 
