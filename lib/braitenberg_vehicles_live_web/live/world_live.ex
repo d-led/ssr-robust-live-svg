@@ -18,6 +18,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
 
     if connected?(socket) do
       Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "coordinates:ball")
+      Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "updates:ball")
     end
 
     {cx, cy} = Ball.get_coordinates()
@@ -38,6 +39,12 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {:noreply, assign(socket, cx: cx, cy: cy)}
   end
 
+  def handle_info({:ball_behavior_changed_to, mod}, socket) do
+    mod_name = mod |> Module.split() |> List.last()
+    movement_atom = mod_name |> Macro.underscore() |> String.to_atom()
+    {:noreply, assign(socket, movement: movement_atom)}
+  end
+
   def handle_event("set_movement", %{"movement" => movement}, socket) do
     available = socket.assigns.available_ball_behaviors
 
@@ -49,7 +56,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
 
     if mod do
       Ball.set_movement(mod)
-      {:noreply, assign(socket, movement: String.to_atom(movement))}
+      {:noreply, socket}
     else
       {:noreply, socket}
     end

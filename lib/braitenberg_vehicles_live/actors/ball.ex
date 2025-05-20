@@ -1,6 +1,8 @@
 defmodule BraitenbergVehiclesLive.Ball do
   use GenServer
 
+  @updates_topic "updates:ball"
+
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -24,10 +26,19 @@ defmodule BraitenbergVehiclesLive.Ball do
       height: height,
       radius: radius,
       interval: interval,
-      movement: movement
+      movement: movement,
+      last_good_movement_module: movement_mod
     }
 
     schedule_tick(interval)
+
+    # Publish initial movement module
+    Phoenix.PubSub.broadcast(
+      BraitenbergVehiclesLive.PubSub,
+      @updates_topic,
+      {:ball_behavior_changed_to, movement_mod}
+    )
+
     {:ok, state}
   end
 
@@ -60,8 +71,21 @@ defmodule BraitenbergVehiclesLive.Ball do
   end
 
   def handle_cast({:set_movement, new_movement_module}, state) do
-    {:noreply,
-     %{state | movement: struct(new_movement_module), last_good_movement: new_movement_module}}
+    # struct() can fail
+    new_state = %{
+      state
+      | movement: struct(new_movement_module),
+        last_good_movement_module: new_movement_module
+    }
+
+    # if we're still alive, broadcast the new movement module
+    Phoenix.PubSub.broadcast(
+      BraitenbergVehiclesLive.PubSub,
+      @updates_topic,
+      {:ball_behavior_changed_to, new_movement_module}
+    )
+
+    {:noreply, new_state}
   end
 
   def handle_cast(:nudge, state) do
