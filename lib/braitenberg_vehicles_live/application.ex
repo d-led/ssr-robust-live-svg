@@ -12,8 +12,7 @@ defmodule BraitenbergVehiclesLive.Application do
       {DNSCluster,
        query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
-      # Start a worker by calling: BraitenbergVehiclesLive.Worker.start_link(arg)
-      # {BraitenbergVehiclesLive.Worker, arg},
+      BraitenbergVehiclesLive.Ball,
       # Start to serve requests, typically the last entry
       BraitenbergVehiclesLiveWeb.Endpoint
     ]
