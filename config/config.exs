@@ -16,7 +16,8 @@ config :braitenberg_vehicles_live, :cell,
 
 config :braitenberg_vehicles_live, :available_ball_behaviors, [
   BraitenbergVehiclesLive.MirrorJump,
-  BraitenbergVehiclesLive.RandomRebound
+  BraitenbergVehiclesLive.RandomRebound,
+  BraitenbergVehiclesLive.NonExistentBehavior
 ]
 
 config :braitenberg_vehicles_live, :ball, radius: 20
