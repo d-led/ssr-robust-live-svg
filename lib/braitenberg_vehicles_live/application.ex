@@ -9,7 +9,8 @@ defmodule BraitenbergVehiclesLive.Application do
   def start(_type, _args) do
     children = [
       BraitenbergVehiclesLiveWeb.Telemetry,
-      {DNSCluster, query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
+      {DNSCluster,
+       query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
       # Start a worker by calling: BraitenbergVehiclesLive.Worker.start_link(arg)
       # {BraitenbergVehiclesLive.Worker, arg},
