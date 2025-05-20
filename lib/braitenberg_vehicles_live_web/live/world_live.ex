@@ -21,7 +21,9 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
       Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "updates:ball")
     end
 
+    # query the ball for its actuals
     {cx, cy} = Ball.get_coordinates()
+    movement_mod = Ball.get_movement_module()
 
     {:ok,
      assign(socket,
@@ -30,7 +32,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
        width: width,
        height: height,
        radius: radius,
-       movement: :mirror_jump,
+       movement: movement_mod,
        available_ball_behaviors: available_ball_behaviors
      )}
   end
@@ -40,18 +42,18 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
   end
 
   def handle_info({:ball_behavior_changed_to, mod}, socket) do
-    mod_name = mod |> Module.split() |> List.last()
-    movement_atom = mod_name |> Macro.underscore() |> String.to_atom()
-    {:noreply, assign(socket, movement: movement_atom)}
+    {:noreply, assign(socket, movement: mod)}
   end
 
   def handle_event("set_movement", %{"movement" => movement}, socket) do
     available = socket.assigns.available_ball_behaviors
 
+    movement = movement |> String.to_existing_atom()
+
     mod =
       available
       |> Enum.find(fn mod ->
-        Macro.underscore(Module.split(mod) |> List.last()) == movement
+        mod == movement
       end)
 
     if mod do
@@ -77,12 +79,11 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             <div class="flex gap-4 col-start-2">
               <%= for mod <- @available_ball_behaviors do %>
                 <% mod_name = mod |> Module.split() |> List.last() %>
-                <% movement_atom = mod_name |> Macro.underscore() |> String.to_atom() %>
                 <button
                   phx-click="set_movement"
-                  phx-value-movement={movement_atom}
-                  disabled={@movement == movement_atom}
-                  class={"btn btn-primary btn-sm" <> if(@movement == movement_atom, do: " btn-disabled", else: "")}
+                  phx-value-movement={mod}
+                  disabled={@movement == mod}
+                  class={"btn btn-primary btn-sm" <> if(@movement == mod, do: " btn-disabled", else: "")}
                 >
                   {mod_name}
                 </button>

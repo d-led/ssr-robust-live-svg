@@ -47,6 +47,10 @@ defmodule BraitenbergVehiclesLive.Ball do
     GenServer.call(__MODULE__, :get_coordinates)
   end
 
+  def get_movement_module() do
+    GenServer.call(__MODULE__, :get_movement_module)
+  end
+
   # change the movement behaviour at runtime
   def set_movement(new_movement_mod) do
     GenServer.cast(__MODULE__, {:set_movement, new_movement_mod})
@@ -68,6 +72,10 @@ defmodule BraitenbergVehiclesLive.Ball do
 
   def handle_call(:get_coordinates, _from, state) do
     {:reply, {state.cx, state.cy}, state}
+  end
+
+  def handle_call(:get_movement_module, _from, state) do
+    {:reply, state.last_good_movement_module, state}
   end
 
   def handle_cast({:set_movement, new_movement_module}, state) do
