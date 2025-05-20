@@ -15,11 +15,14 @@ defmodule BraitenbergVehiclesLive.Application do
       BraitenbergVehiclesLiveWeb.Telemetry,
       {DNSCluster,
        query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
+      # start pub/sub before the actors
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
+      # custom actors
       {BraitenbergVehiclesLive.Ball,
        cell_config
        |> Keyword.merge(animation_config)
-       |> Keyword.merge(ball_config)},
+       |> Keyword.merge(ball_config)
+       |> Keyword.put(:movement, BraitenbergVehiclesLive.MirrorJump)},
       # Start to serve requests, typically the last entry
       BraitenbergVehiclesLiveWeb.Endpoint
     ]

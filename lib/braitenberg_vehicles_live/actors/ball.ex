@@ -9,8 +9,8 @@ defmodule BraitenbergVehiclesLive.Ball do
     width = Keyword.get(opts, :width)
     height = Keyword.get(opts, :height)
     radius = Keyword.get(opts, :radius)
-    animation = Keyword.get(opts, :animation, [])
-    interval = Keyword.get(animation, :interval, 30)
+    interval = Keyword.get(opts, :interval)
+    movement = Keyword.get(opts, :movement)
 
     state = %{
       # Initial x-pos
@@ -22,7 +22,8 @@ defmodule BraitenbergVehiclesLive.Ball do
       width: width,
       height: height,
       radius: radius,
-      interval: interval
+      interval: interval,
+      movement: movement
     }
 
     schedule_tick(interval)
@@ -37,32 +38,11 @@ defmodule BraitenbergVehiclesLive.Ball do
   # Callbacks
 
   def handle_info(:tick, state) do
-    {cx, cy, dx, dy} = move_ball(state)
+    {cx, cy, dx, dy} = BallMovement.move(state)
     new_state = %{state | cx: cx, cy: cy, dx: dx, dy: dy}
     publish_coordinates(cx, cy)
     schedule_tick(state.interval)
     {:noreply, new_state}
-  end
-
-  defp move_ball(%{cx: cx, cy: cy, dx: dx, dy: dy, width: width, height: height, radius: radius}) do
-    next_cx = cx + dx
-    next_cy = cy + dy
-
-    new_dx =
-      cond do
-        next_cx - radius <= 0 and dx < 0 -> -dx
-        next_cx + radius >= width and dx > 0 -> -dx
-        true -> dx
-      end
-
-    new_dy =
-      cond do
-        next_cy - radius <= 0 and dy < 0 -> -dy
-        next_cy + radius >= height and dy > 0 -> -dy
-        true -> dy
-      end
-
-    {cx + new_dx, cy + new_dy, new_dx, new_dy}
   end
 
   def handle_call(:get_coordinates, _from, state) do
