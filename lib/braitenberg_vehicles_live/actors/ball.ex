@@ -38,7 +38,7 @@ defmodule BraitenbergVehiclesLive.Ball do
 
   # change the movement behaviour at runtime
   def set_movement(new_movement_mod) do
-    GenServer.cast(__MODULE__, {:set_movement, struct(new_movement_mod)})
+    GenServer.cast(__MODULE__, {:set_movement, new_movement_mod})
   end
 
   def nudge do
@@ -59,8 +59,9 @@ defmodule BraitenbergVehiclesLive.Ball do
     {:reply, {state.cx, state.cy}, state}
   end
 
-  def handle_cast({:set_movement, new_movement}, state) do
-    {:noreply, %{state | movement: new_movement}}
+  def handle_cast({:set_movement, new_movement_module}, state) do
+    {:noreply,
+     %{state | movement: struct(new_movement_module), last_good_movement: new_movement_module}}
   end
 
   def handle_cast(:nudge, state) do
