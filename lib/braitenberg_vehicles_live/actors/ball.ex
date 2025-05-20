@@ -10,7 +10,8 @@ defmodule BraitenbergVehiclesLive.Ball do
     height = Keyword.get(opts, :height)
     radius = Keyword.get(opts, :radius)
     interval = Keyword.get(opts, :interval)
-    movement = Keyword.get(opts, :movement)
+    movement_mod = Keyword.get(opts, :movement)
+    movement = struct(movement_mod)
 
     state = %{
       # Initial x-pos
@@ -37,8 +38,8 @@ defmodule BraitenbergVehiclesLive.Ball do
 
   # Callbacks
 
-  def handle_info(:tick, state) do
-    {cx, cy, dx, dy} = BallMovement.move(state)
+  def handle_info(:tick, %{movement: movement} = state) do
+    {cx, cy, dx, dy} = BallMovement.move(movement, state)
     new_state = %{state | cx: cx, cy: cy, dx: dx, dy: dy}
     publish_coordinates(cx, cy)
     schedule_tick(state.interval)

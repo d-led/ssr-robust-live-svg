@@ -1,8 +1,8 @@
 defmodule BraitenbergVehiclesLive.MirrorJump do
-  # stateless for now
+  defstruct []
 
-  defimpl BallMovement, for: Map do
-    def move(%{
+  defimpl BallMovement, for: __MODULE__ do
+    def move(_movement_state, %{
           cx: cx,
           cy: cy,
           dx: dx,
