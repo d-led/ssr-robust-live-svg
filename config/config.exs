@@ -16,6 +16,8 @@ config :braitenberg_vehicles_live, :cell,
 
 config :braitenberg_vehicles_live, :ball, radius: 20
 
+config :braitenberg_vehicles_live, :animation, interval: 30
+
 # Configures the endpoint
 config :braitenberg_vehicles_live, BraitenbergVehiclesLiveWeb.Endpoint,
   url: [host: "localhost"],

@@ -1,8 +1,6 @@
 defmodule BraitenbergVehiclesLive.Ball do
   use GenServer
 
-  @interval 30
-
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -11,6 +9,8 @@ defmodule BraitenbergVehiclesLive.Ball do
     width = Keyword.get(opts, :width)
     height = Keyword.get(opts, :height)
     radius = Keyword.get(opts, :radius)
+    animation = Keyword.get(opts, :animation, [])
+    interval = Keyword.get(animation, :interval, 30)
 
     state = %{
       # Initial x-pos
@@ -21,10 +21,11 @@ defmodule BraitenbergVehiclesLive.Ball do
       dy: 3,
       width: width,
       height: height,
-      radius: radius
+      radius: radius,
+      interval: interval
     }
 
-    schedule_tick()
+    schedule_tick(interval)
     {:ok, state}
   end
 
@@ -39,7 +40,7 @@ defmodule BraitenbergVehiclesLive.Ball do
     {cx, cy, dx, dy} = move_ball(state)
     new_state = %{state | cx: cx, cy: cy, dx: dx, dy: dy}
     publish_coordinates(cx, cy)
-    schedule_tick()
+    schedule_tick(state.interval)
     {:noreply, new_state}
   end
 
@@ -70,8 +71,8 @@ defmodule BraitenbergVehiclesLive.Ball do
 
   # details
 
-  defp schedule_tick do
-    Process.send_after(self(), :tick, @interval)
+  defp schedule_tick(interval) do
+    Process.send_after(self(), :tick, interval)
   end
 
   defp publish_coordinates(cx, cy) do

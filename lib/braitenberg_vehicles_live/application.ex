@@ -9,13 +9,17 @@ defmodule BraitenbergVehiclesLive.Application do
   def start(_type, _args) do
     ball_config = Application.get_env(:braitenberg_vehicles_live, :ball, [])
     cell_config = Application.get_env(:braitenberg_vehicles_live, :cell, [])
+    animation_config = Application.get_env(:braitenberg_vehicles_live, :animation, [])
 
     children = [
       BraitenbergVehiclesLiveWeb.Telemetry,
       {DNSCluster,
        query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
-      {BraitenbergVehiclesLive.Ball, Keyword.merge(cell_config, ball_config)},
+      {BraitenbergVehiclesLive.Ball,
+       cell_config
+       |> Keyword.merge(animation_config)
+       |> Keyword.merge(ball_config)},
       # Start to serve requests, typically the last entry
       BraitenbergVehiclesLiveWeb.Endpoint
     ]
