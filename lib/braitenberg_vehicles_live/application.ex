@@ -17,19 +17,32 @@ defmodule BraitenbergVehiclesLive.Application do
        query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
       # start pub/sub before the actors
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
+      BraitenbergVehiclesLive.StateGuardian,
       # custom actors
-      {BraitenbergVehiclesLive.Ball,
-       cell_config
-       |> Keyword.merge(animation_config)
-       |> Keyword.merge(ball_config)
-       |> Keyword.put(:movement, BraitenbergVehiclesLive.MirrorJump)},
+      Supervisor.child_spec(
+        {BraitenbergVehiclesLive.Ball,
+         cell_config
+         |> Keyword.merge(animation_config)
+         |> Keyword.merge(ball_config)
+         |> Keyword.put(:movement, BraitenbergVehiclesLive.MirrorJump)},
+        id: BraitenbergVehiclesLive.Ball,
+        restart: :permanent,
+        shutdown: 5000,
+        type: :worker
+      ),
       # Start to serve requests, typically the last entry
       BraitenbergVehiclesLiveWeb.Endpoint
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: BraitenbergVehiclesLive.Supervisor]
+    opts = [
+      strategy: :one_for_one,
+      name: BraitenbergVehiclesLive.Supervisor,
+      # Allow up to N restarts
+      max_restarts: 42,
+      # ...within 60 seconds
+      max_seconds: 60
+    ]
+
     Supervisor.start_link(children, opts)
   end
 
