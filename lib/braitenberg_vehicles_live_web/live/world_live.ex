@@ -2,6 +2,9 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
   alias BraitenbergVehiclesLive.Ball
   use BraitenbergVehiclesLiveWeb, :live_view
 
+  @mirror_jump BraitenbergVehiclesLive.MirrorJump
+  @random_rebound BraitenbergVehiclesLive.RandomRebound
+
   def mount(_params, _session, socket) do
     config =
       Keyword.merge(
@@ -25,7 +28,8 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
        cy: cy,
        width: width,
        height: height,
-       radius: radius
+       radius: radius,
+       movement: :mirror_jump
      )}
   end
 
@@ -33,16 +37,59 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {:noreply, assign(socket, cx: cx, cy: cy)}
   end
 
+  def handle_event("set_movement", %{"movement" => "mirror_jump"}, socket) do
+    Ball.set_movement(@mirror_jump)
+    {:noreply, assign(socket, movement: :mirror_jump)}
+  end
+
+  def handle_event("set_movement", %{"movement" => "random_rebound"}, socket) do
+    Ball.set_movement(@random_rebound)
+    {:noreply, assign(socket, movement: :random_rebound)}
+  end
+
+  def handle_event("nudge_ball", _params, socket) do
+    Ball.nudge()
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
-    <svg
-      viewBox={"0 0 #{@width} #{@height}"}
-      width={@width}
-      height={@height}
-      style="border: 0.5px solid black;"
-    >
-      <circle cx={@cx} cy={@cy} r={@radius} fill="blue" />
-    </svg>
+    <div class="flex justify-center items-start min-h-screen bg-base-200">
+      <div class="card shadow-xl bg-base-100 p-6">
+        <div class="mb-4 flex items-center gap-4">
+          <span class="font-semibold">Ball movement:</span>
+          <button
+            phx-click="set_movement"
+            phx-value-movement="mirror_jump"
+            disabled={@movement == :mirror_jump}
+            class={"btn btn-primary btn-sm" <> if(@movement == :mirror_jump, do: " btn-disabled", else: "")}
+          >
+            MirrorJump
+          </button>
+          <button
+            phx-click="set_movement"
+            phx-value-movement="random_rebound"
+            disabled={@movement == :random_rebound}
+            class={"btn btn-secondary btn-sm" <> if(@movement == :random_rebound, do: " btn-disabled", else: "")}
+          >
+            RandomRebound
+          </button>
+          <button phx-click="nudge_ball" class="btn btn-accent btn-sm">
+            Nudge Ball
+          </button>
+        </div>
+        <div class="flex justify-center">
+          <svg
+            viewBox={"0 0 #{@width} #{@height}"}
+            width={@width}
+            height={@height}
+            style="border: 0.5px solid black;"
+          >
+            <circle cx={@cx} cy={@cy} r={@radius} fill="blue" />
+          </svg>
+        </div>
+      </div>
+    </div>
     """
   end
 end

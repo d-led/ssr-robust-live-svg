@@ -36,6 +36,15 @@ defmodule BraitenbergVehiclesLive.Ball do
     GenServer.call(__MODULE__, :get_coordinates)
   end
 
+  # change the movement behaviour at runtime
+  def set_movement(new_movement_mod) do
+    GenServer.cast(__MODULE__, {:set_movement, struct(new_movement_mod)})
+  end
+
+  def nudge do
+    GenServer.cast(__MODULE__, :nudge)
+  end
+
   # Callbacks
 
   def handle_info(:tick, %{movement: movement} = state) do
@@ -50,6 +59,15 @@ defmodule BraitenbergVehiclesLive.Ball do
     {:reply, {state.cx, state.cy}, state}
   end
 
+  def handle_cast({:set_movement, new_movement}, state) do
+    {:noreply, %{state | movement: new_movement}}
+  end
+
+  def handle_cast(:nudge, state) do
+    {dx, dy} = random_nonzero_delta()
+    {:noreply, %{state | dx: dx, dy: dy}}
+  end
+
   # details
 
   defp schedule_tick(interval) do
@@ -62,5 +80,11 @@ defmodule BraitenbergVehiclesLive.Ball do
       "coordinates:ball",
       {:ball_coordinates, %{cx: cx, cy: cy}}
     )
+  end
+
+  defp random_nonzero_delta do
+    dx = Enum.random([-5, -4, -3, 3, 4, 5])
+    dy = Enum.random([-5, -4, -3, 3, 4, 5])
+    {dx, dy}
   end
 end
