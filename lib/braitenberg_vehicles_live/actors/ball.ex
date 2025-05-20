@@ -55,6 +55,12 @@ defmodule BraitenbergVehiclesLive.Ball do
         Phoenix.PubSub.broadcast(
           BraitenbergVehiclesLive.PubSub,
           @updates_topic,
+          {:ball_state_restored, restored_state.last_good_movement_module}
+        )
+
+        Phoenix.PubSub.broadcast(
+          BraitenbergVehiclesLive.PubSub,
+          @updates_topic,
           {:ball_behavior_changed_to, restored_state.last_good_movement_module}
         )
 
@@ -122,9 +128,16 @@ defmodule BraitenbergVehiclesLive.Ball do
   end
 
   # Save state before terminating (e.g., crash)
-  def terminate(_reason, state) do
+  def terminate(reason, state) do
     Logger.debug("Ball crashed, saving state")
     BraitenbergVehiclesLive.StateGuardian.keep_state(__MODULE__, state)
+
+    Phoenix.PubSub.broadcast(
+      BraitenbergVehiclesLive.PubSub,
+      @updates_topic,
+      {:ball_error, reason}
+    )
+
     :ok
   end
 

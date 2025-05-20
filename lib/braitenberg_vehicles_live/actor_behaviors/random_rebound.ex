@@ -14,6 +14,7 @@ defmodule BraitenbergVehiclesLive.RandomRebound do
       next_cx = cx + dx
       next_cy = cy + dy
 
+      # bug: can become zero
       randomize = fn v ->
         v + (:rand.uniform(11) - 6)
       end

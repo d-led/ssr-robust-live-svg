@@ -33,7 +33,8 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
        height: height,
        radius: radius,
        movement: movement_mod,
-       available_ball_behaviors: available_ball_behaviors
+       available_ball_behaviors: available_ball_behaviors,
+       alerts: []
      )}
   end
 
@@ -41,8 +42,44 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {:noreply, assign(socket, cx: cx, cy: cy)}
   end
 
+  def handle_info({:ball_error, reason}, socket) do
+    id = System.unique_integer([:positive])
+    # Use Exception.format_exit/1 for a user-friendly message
+    msg =
+      case reason do
+        nil -> "Unknown error"
+        _ -> Exception.format_exit(reason)
+      end
+
+    alert = %{id: id, type: :error, msg: "Ball crashed: #{msg}"}
+    schedule_alert_removal(id)
+    {:noreply, update(socket, :alerts, &[alert | &1])}
+  end
+
+  def handle_info({:ball_state_restored, mod}, socket) do
+    id = System.unique_integer([:positive])
+    mod_name = mod |> Module.split() |> List.last()
+    alert = %{id: id, type: :warning, msg: "Ball state restored. Movement: #{mod_name}"}
+    schedule_alert_removal(id)
+    {:noreply, update(socket, :alerts, &[alert | &1])}
+  end
+
   def handle_info({:ball_behavior_changed_to, mod}, socket) do
-    {:noreply, assign(socket, movement: mod)}
+    id = System.unique_integer([:positive])
+    mod_name = mod |> Module.split() |> List.last()
+    alert = %{id: id, type: :info, msg: "Ball behavior changed to #{mod_name}"}
+    schedule_alert_removal(id)
+
+    socket =
+      socket
+      |> assign(movement: mod)
+      |> update(:alerts, &[alert | &1])
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:remove_alert, id}, socket) do
+    {:noreply, update(socket, :alerts, fn alerts -> Enum.reject(alerts, &(&1.id == id)) end)}
   end
 
   def handle_event("set_movement", %{"movement" => movement}, socket) do
@@ -99,7 +136,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             </div>
           </div>
         </div>
-        <div class="flex justify-center">
+        <div class="flex justify-center relative" style={"width: #{@width}px; height: #{@height}px;"}>
           <svg
             viewBox={"0 0 #{@width} #{@height}"}
             width={@width}
@@ -109,8 +146,26 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             <circle cx={@cx} cy={@cy} r={@radius} fill="blue" />
           </svg>
         </div>
+        <div class="flex justify-center mt-2" style={"width: #{@width}px;"}>
+          <div class="w-full">
+            <%= for alert <- Enum.reverse(@alerts) do %>
+              <div
+                role="alert"
+                class={"alert alert-#{alert.type} mb-2 w-full flex justify-center"}
+                id={"alert-#{alert.id}"}
+                style="pointer-events: none;"
+              >
+                <span style="pointer-events: auto;">{alert.msg}</span>
+              </div>
+            <% end %>
+          </div>
+        </div>
       </div>
     </div>
     """
+  end
+
+  defp schedule_alert_removal(id) do
+    Process.send_after(self(), {:remove_alert, id}, 2_000)
   end
 end
