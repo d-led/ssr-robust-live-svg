@@ -14,6 +14,11 @@ config :braitenberg_vehicles_live, :cell,
   width: 800,
   height: 600
 
+config :braitenberg_vehicles_live, :available_ball_behaviors, [
+  BraitenbergVehiclesLive.MirrorJump,
+  BraitenbergVehiclesLive.RandomRebound
+]
+
 config :braitenberg_vehicles_live, :ball, radius: 20
 
 config :braitenberg_vehicles_live, :animation, interval: 30

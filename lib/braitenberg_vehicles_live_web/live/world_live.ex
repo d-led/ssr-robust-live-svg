@@ -2,9 +2,6 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
   alias BraitenbergVehiclesLive.Ball
   use BraitenbergVehiclesLiveWeb, :live_view
 
-  @mirror_jump BraitenbergVehiclesLive.MirrorJump
-  @random_rebound BraitenbergVehiclesLive.RandomRebound
-
   def mount(_params, _session, socket) do
     config =
       Keyword.merge(
@@ -15,6 +12,9 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     width = Keyword.get(config, :width)
     height = Keyword.get(config, :height)
     radius = Keyword.get(config, :radius)
+
+    available_ball_behaviors =
+      Application.get_env(:braitenberg_vehicles_live, :available_ball_behaviors)
 
     if connected?(socket) do
       Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "coordinates:ball")
@@ -29,7 +29,8 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
        width: width,
        height: height,
        radius: radius,
-       movement: :mirror_jump
+       movement: :mirror_jump,
+       available_ball_behaviors: available_ball_behaviors
      )}
   end
 
@@ -37,14 +38,21 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {:noreply, assign(socket, cx: cx, cy: cy)}
   end
 
-  def handle_event("set_movement", %{"movement" => "mirror_jump"}, socket) do
-    Ball.set_movement(@mirror_jump)
-    {:noreply, assign(socket, movement: :mirror_jump)}
-  end
+  def handle_event("set_movement", %{"movement" => movement}, socket) do
+    available = socket.assigns.available_ball_behaviors
 
-  def handle_event("set_movement", %{"movement" => "random_rebound"}, socket) do
-    Ball.set_movement(@random_rebound)
-    {:noreply, assign(socket, movement: :random_rebound)}
+    mod =
+      available
+      |> Enum.find(fn mod ->
+        Macro.underscore(Module.split(mod) |> List.last()) == movement
+      end)
+
+    if mod do
+      Ball.set_movement(mod)
+      {:noreply, assign(socket, movement: String.to_atom(movement))}
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_event("nudge_ball", _params, socket) do
@@ -60,22 +68,18 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
           <div class="contents">
             <span class="font-semibold col-start-1">Ball movement:</span>
             <div class="flex gap-4 col-start-2">
-              <button
-                phx-click="set_movement"
-                phx-value-movement="mirror_jump"
-                disabled={@movement == :mirror_jump}
-                class={"btn btn-primary btn-sm" <> if(@movement == :mirror_jump, do: " btn-disabled", else: "")}
-              >
-                MirrorJump
-              </button>
-              <button
-                phx-click="set_movement"
-                phx-value-movement="random_rebound"
-                disabled={@movement == :random_rebound}
-                class={"btn btn-secondary btn-sm" <> if(@movement == :random_rebound, do: " btn-disabled", else: "")}
-              >
-                RandomRebound
-              </button>
+              <%= for mod <- @available_ball_behaviors do %>
+                <% mod_name = mod |> Module.split() |> List.last() %>
+                <% movement_atom = mod_name |> Macro.underscore() |> String.to_atom() %>
+                <button
+                  phx-click="set_movement"
+                  phx-value-movement={movement_atom}
+                  disabled={@movement == movement_atom}
+                  class={"btn btn-primary btn-sm" <> if(@movement == movement_atom, do: " btn-disabled", else: "")}
+                >
+                  {mod_name}
+                </button>
+              <% end %>
             </div>
           </div>
           <div class="contents">
