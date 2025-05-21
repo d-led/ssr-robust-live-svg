@@ -5,16 +5,17 @@ defmodule BraitenbergVehiclesLive.RandomReboundTest do
 
   defp move_ball(opts) do
     # Provide defaults and allow overrides
-    state = %{
-      cx: 50,
-      cy: 50,
-      dx: 5,
-      dy: 5,
-      width: 100,
-      height: 100,
-      radius: 10
-    }
-    |> Map.merge(opts)
+    state =
+      %{
+        cx: 50,
+        cy: 50,
+        dx: 5,
+        dy: 5,
+        width: 100,
+        height: 100,
+        radius: 10
+      }
+      |> Map.merge(opts)
 
     # The movement struct is not used in logic, so just pass %RandomRebound{}
     BallMovement.move(%RandomRebound{}, state)
@@ -27,7 +28,6 @@ defmodule BraitenbergVehiclesLive.RandomReboundTest do
     assert dx == 5
     assert dy == 5
   end
-
 
   test "bounces and randomizes dx at left wall" do
     # Place ball at left wall, moving left
