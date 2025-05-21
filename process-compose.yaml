@@ -1,0 +1,26 @@
+version: "0.5"
+
+# https://f1bonacc1.github.io/process-compose/
+# process-compose
+
+log_location: processes.log
+log_level: debug
+
+processes:
+  node1:
+    command: "elixir --name node1@127.0.0.1 -S mix phx.server"
+    working_dir: "./"
+    environment:
+      - "PORT=4000"
+
+  node2:
+    command: "elixir --name node2@127.0.0.1 -S mix phx.server"
+    working_dir: "./"
+    environment:
+      - "PORT=4001"
+
+  node3:
+    command: "elixir --name node3@127.0.0.1 -S mix phx.server"
+    working_dir: "./"
+    environment:
+      - "PORT=4002"
