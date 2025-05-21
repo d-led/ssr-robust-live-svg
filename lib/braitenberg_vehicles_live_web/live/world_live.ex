@@ -91,10 +91,12 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
   end
 
   def handle_info(
-        {:cluster_info, %{node: node, version: version, other_nodes: other_nodes, ball_node: ball_node}},
+        {:cluster_info,
+         %{node: node, version: version, other_nodes: other_nodes, ball_node: ball_node}},
         socket
       ) do
-    {:noreply, assign(socket, node: node, version: version, other_nodes: other_nodes, ball_node: ball_node)}
+    {:noreply,
+     assign(socket, node: node, version: version, other_nodes: other_nodes, ball_node: ball_node)}
   end
 
   def handle_event("set_movement", %{"movement" => movement}, socket) do
@@ -161,7 +163,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             </span>
           <% end %>
           <span class="badge badge-soft badge-info">
-            Ball@<%= node_name(@ball_node) %>
+            Ball@{node_name(@ball_node)}
           </span>
         </div>
         <div class="flex justify-center relative" style={"width: #{@width}px; height: #{@height}px;"}>

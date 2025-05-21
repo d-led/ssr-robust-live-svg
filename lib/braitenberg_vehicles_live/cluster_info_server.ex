@@ -59,8 +59,9 @@ defmodule BraitenbergVehiclesLive.ClusterInfoServer do
         [{pid, _value}] -> :erlang.node(pid)
         [] -> :not_found
       end
-      # |> IO.inspect(label: "Ball node")
-      # Horde.Registry.select(BraitenbergVehiclesLive.HordeRegistry, [{{:"$1", :_, :_}, [], [:"$1"]}]) |> IO.inspect(label: "all processes")
+
+    # |> IO.inspect(label: "Ball node")
+    # Horde.Registry.select(BraitenbergVehiclesLive.HordeRegistry, [{{:"$1", :_, :_}, [], [:"$1"]}]) |> IO.inspect(label: "all processes")
 
     %{
       node: node,

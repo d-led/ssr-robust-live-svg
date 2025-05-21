@@ -17,6 +17,8 @@ defmodule BraitenbergVehiclesLive.Application do
        query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
       {Cluster.Supervisor, [topologies() |> IO.inspect(label: "chosen cluster config")]},
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
+      BraitenbergVehiclesLive.ClusterInfoServer,
+      BraitenbergVehiclesLive.VersionServer,
       BraitenbergVehiclesLive.StateGuardian,
       # Horde registry and supervisor
       {Horde.Registry,
@@ -32,7 +34,6 @@ defmodule BraitenbergVehiclesLive.Application do
          max_restarts: 1000,
          max_seconds: 60
        ]},
-      BraitenbergVehiclesLive.VersionServer,
       %{
         id: BraitenbergVehiclesLive.ActorSupervisor,
         restart: :transient,
@@ -61,7 +62,6 @@ defmodule BraitenbergVehiclesLive.Application do
              end
            ]}
       },
-      BraitenbergVehiclesLive.ClusterInfoServer,
       BraitenbergVehiclesLiveWeb.Endpoint
     ]
 
@@ -74,30 +74,7 @@ defmodule BraitenbergVehiclesLive.Application do
       max_seconds: 60
     ]
 
-    {:ok, sup_pid} = Supervisor.start_link(children, opts)
-
-    # Start Ball via Horde (only if not already running)
-    Horde.DynamicSupervisor.start_child(
-      BraitenbergVehiclesLive.HordeSupervisor,
-      %{
-        id: BraitenbergVehiclesLive.Ball,
-        start: {
-          BraitenbergVehiclesLive.Ball,
-          :start_link,
-          [
-            cell_config
-            |> Keyword.merge(animation_config)
-            |> Keyword.merge(ball_config)
-            |> Keyword.put(:movement, BraitenbergVehiclesLive.MirrorJump)
-          ]
-        },
-        restart: :permanent,
-        shutdown: 5000,
-        type: :worker
-      }
-    )
-
-    {:ok, sup_pid}
+    Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration
