@@ -25,21 +25,8 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {cx, cy} = Ball.get_coordinates()
     movement_mod = Ball.get_movement_module()
 
-    node = Node.self()
-    version = BraitenbergVehiclesLive.VersionServer.get_version()
-
-    other_nodes =
-      Node.list()
-      |> Enum.map(fn n ->
-        v =
-          :rpc.call(n, BraitenbergVehiclesLive.VersionServer, :get_version, [])
-          |> case do
-            {:badrpc, _} -> "unknown"
-            v -> v
-          end
-
-        {n, v}
-      end)
+    %{node: node, version: version, other_nodes: other_nodes} =
+      BraitenbergVehiclesLive.ClusterInfoServer.get_cluster_info()
 
     {:ok,
      assign(socket,

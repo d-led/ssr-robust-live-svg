@@ -61,6 +61,7 @@ defmodule BraitenbergVehiclesLive.Application do
              end
            ]}
       },
+      BraitenbergVehiclesLive.ClusterInfoServer,
       BraitenbergVehiclesLiveWeb.Endpoint
     ]
 
