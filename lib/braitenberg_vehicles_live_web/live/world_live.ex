@@ -153,15 +153,15 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
         </div>
         <div class="flex gap-2 mb-4">
           <span class="badge badge-info font-bold">
-            <strong>{@version}{inspect(@node)}</strong>
+            <strong>{@version}@{node_name(@node)}</strong>
           </span>
           <%= for {node, version} <- @other_nodes do %>
             <span class="badge badge-outline">
-              {version}{inspect(node)}
+              {version}@{node_name(node)}
             </span>
           <% end %>
           <span class="badge badge-soft badge-info">
-            Ball<%= inspect(@ball_node) %>
+            Ball@<%= node_name(@ball_node) %>
           </span>
         </div>
         <div class="flex justify-center relative" style={"width: #{@width}px; height: #{@height}px;"}>
@@ -195,5 +195,39 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
 
   defp schedule_alert_removal(id) do
     Process.send_after(self(), {:remove_alert, id}, 2_000)
+  end
+
+  defp node_name(node) do
+    node
+    |> to_string()
+    |> String.split("@")
+    |> case do
+      [first, second] ->
+        short_first =
+          if String.length(first) > 8 do
+            String.slice(first, 0, 8) <> "…"
+          else
+            first
+          end
+
+        short_second =
+          if String.length(second) > 8 do
+            "…" <> String.slice(second, -8, 8)
+          else
+            second
+          end
+
+        "#{short_first}@#{short_second}"
+
+      [single] ->
+        if String.length(single) > 16 do
+          String.slice(single, 0, 16) <> "…"
+        else
+          single
+        end
+
+      _ ->
+        inspect(node)
+    end
   end
 end
