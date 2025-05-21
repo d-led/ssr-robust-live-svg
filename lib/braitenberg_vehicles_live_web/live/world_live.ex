@@ -155,16 +155,24 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
         </div>
         <div class="flex gap-2 mb-4">
           <span class="badge badge-info font-bold">
-            <strong>{@version}@{node_name(@node)}</strong>
+            <strong>
+              <span title={to_string(@node)}>
+                {@version}@{node_name(@node)}
+              </span>
+            </strong>
           </span>
           <%= for {node, version} <- @other_nodes do %>
             <span class="badge badge-outline">
-              {version}@{node_name(node)}
+              <span title={to_string(node)}>
+                {version}@{node_name(node)}
+              </span>
               <%!-- <button class="btn btn-outline btn-sm"><.icon name="hero-x-mark-solid" class="size-5 opacity-40 group-hover:opacity-70" /></button> --%>
             </span>
           <% end %>
           <span class="badge badge-soft badge-info">
-            Ball@{node_name(@ball_node)}
+            <span title={to_string(@ball_node)}>
+              Ball@{node_name(@ball_node)}
+            </span>
           </span>
         </div>
         <div class="flex justify-center relative" style={"width: #{@width}px; height: #{@height}px;"}>
