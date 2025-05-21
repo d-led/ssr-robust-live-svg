@@ -25,6 +25,22 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {cx, cy} = Ball.get_coordinates()
     movement_mod = Ball.get_movement_module()
 
+    node = Node.self()
+    version = BraitenbergVehiclesLive.VersionServer.get_version()
+
+    other_nodes =
+      Node.list()
+      |> Enum.map(fn n ->
+        v =
+          :rpc.call(n, BraitenbergVehiclesLive.VersionServer, :get_version, [])
+          |> case do
+            {:badrpc, _} -> "unknown"
+            v -> v
+          end
+
+        {n, v}
+      end)
+
     {:ok,
      assign(socket,
        cx: cx,
@@ -34,7 +50,10 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
        radius: radius,
        movement: movement_mod,
        available_ball_behaviors: available_ball_behaviors,
-       alerts: []
+       alerts: [],
+       node: node,
+       version: version,
+       other_nodes: other_nodes
      )}
   end
 
@@ -135,6 +154,16 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
               </button>
             </div>
           </div>
+        </div>
+        <div class="flex gap-2 mb-4">
+          <span class="badge badge-info font-bold">
+            <strong><%= inspect(@node) %> v<%= @version %></strong>
+          </span>
+          <%= for {node, version} <- @other_nodes do %>
+            <span class="badge badge-outline">
+              <strong><%= inspect(node) %> v<%= version %></strong>
+            </span>
+          <% end %>
         </div>
         <div class="flex justify-center relative" style={"width: #{@width}px; height: #{@height}px;"}>
           <svg

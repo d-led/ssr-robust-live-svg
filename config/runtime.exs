@@ -33,13 +33,14 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
+  host = System.get_env("PHX_HOST") || "localhost"
   port = String.to_integer(System.get_env("PORT") || "4000")
+  context_path = System.get_env("CONTEXT_PATH") || ""
 
   config :braitenberg_vehicles_live, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :braitenberg_vehicles_live, BraitenbergVehiclesLiveWeb.Endpoint,
-    url: [host: host, port: 443, scheme: "https"],
+    url: [host: host, port: port, path: context_path],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
@@ -48,7 +49,10 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    secret_key_base: secret_key_base
+    check_origin: false,
+    server: true,
+    secret_key_base: secret_key_base,
+    context_path: context_path
 
   # ## SSL Support
   #

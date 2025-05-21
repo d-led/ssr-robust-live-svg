@@ -15,6 +15,7 @@ defmodule BraitenbergVehiclesLive.Application do
       BraitenbergVehiclesLiveWeb.Telemetry,
       {DNSCluster,
        query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
+      {Cluster.Supervisor, [topologies() |> IO.inspect(label: "chosen cluster config")]},
       # start pub/sub before the actors
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
       BraitenbergVehiclesLive.StateGuardian,
@@ -30,6 +31,7 @@ defmodule BraitenbergVehiclesLive.Application do
         shutdown: 5000,
         type: :worker
       ),
+      BraitenbergVehiclesLive.VersionServer,
       # Start to serve requests, typically the last entry
       BraitenbergVehiclesLiveWeb.Endpoint
     ]
@@ -52,5 +54,26 @@ defmodule BraitenbergVehiclesLive.Application do
   def config_change(changed, _new, removed) do
     BraitenbergVehiclesLiveWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp topologies() do
+    case System.get_env("ERLANG_SEED_NODES", "")
+         |> String.split(",") |> Enum.reject(&String.trim(&1) == "")
+         |> Enum.map(&String.to_atom/1) do
+      [] ->
+        [
+          default: [
+            strategy: Cluster.Strategy.Gossip
+          ]
+        ]
+
+      seed_nodes ->
+        [
+          default: [
+            strategy: Cluster.Strategy.Epmd,
+            config: [hosts: seed_nodes]
+          ]
+        ]
+    end
   end
 end

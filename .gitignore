@@ -35,3 +35,4 @@ braitenberg_vehicles_live-*.tar
 npm-debug.log
 /assets/node_modules/
 
+*.log
