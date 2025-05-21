@@ -96,6 +96,7 @@ defmodule BraitenbergVehiclesLive.Ball do
     {cx, cy, dx, dy} = BallMovement.move(movement, state)
     new_state = %{state | cx: cx, cy: cy, dx: dx, dy: dy}
     publish_coordinates(cx, cy)
+    publish_state_to_later_restore(new_state)
     schedule_tick(state.interval)
     {:noreply, new_state}
   end
@@ -156,6 +157,14 @@ defmodule BraitenbergVehiclesLive.Ball do
       BraitenbergVehiclesLive.PubSub,
       "coordinates:ball",
       {:ball_coordinates, %{cx: cx, cy: cy}}
+    )
+  end
+
+  defp publish_state_to_later_restore(state) do
+    Phoenix.PubSub.broadcast(
+      BraitenbergVehiclesLive.PubSub,
+      "state:ball",
+      {:ball_state, state}
     )
   end
 
