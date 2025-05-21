@@ -160,6 +160,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
           <%= for {node, version} <- @other_nodes do %>
             <span class="badge badge-outline">
               {version}@{node_name(node)}
+              <%!-- <button class="btn btn-outline btn-sm"><.icon name="hero-x-mark-solid" class="size-5 opacity-40 group-hover:opacity-70" /></button> --%>
             </span>
           <% end %>
           <span class="badge badge-soft badge-info">
