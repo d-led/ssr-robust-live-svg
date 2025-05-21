@@ -5,7 +5,15 @@ defmodule BraitenbergVehiclesLive.Ball do
   @updates_topic "updates:ball"
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+    case GenServer.start_link(__MODULE__, opts, name: via_horde(__MODULE__)) do
+      {:ok, pid} ->
+        Logger.info("Started a global instance of #{__MODULE__}")
+        {:ok, pid}
+
+      {:error, {:already_started, pid}} ->
+        Logger.info("already started at #{inspect(pid)}")
+        :ignore
+    end
   end
 
   def init(opts) do
@@ -22,9 +30,7 @@ defmodule BraitenbergVehiclesLive.Ball do
         movement = struct(movement_mod)
 
         state = %{
-          # Initial x-pos
           cx: div(width, 2),
-          # Initial y-pos
           cy: div(height, 2),
           dx: 4,
           dy: 3,
@@ -38,7 +44,6 @@ defmodule BraitenbergVehiclesLive.Ball do
 
         schedule_tick(interval)
 
-        # Publish initial movement module
         Phoenix.PubSub.broadcast(
           BraitenbergVehiclesLive.PubSub,
           @updates_topic,
@@ -70,20 +75,19 @@ defmodule BraitenbergVehiclesLive.Ball do
 
   # API
   def get_coordinates() do
-    GenServer.call(__MODULE__, :get_coordinates)
+    GenServer.call(via_horde(), :get_coordinates)
   end
 
   def get_movement_module() do
-    GenServer.call(__MODULE__, :get_movement_module)
+    GenServer.call(via_horde(), :get_movement_module)
   end
 
-  # change the movement behaviour at runtime
   def set_movement(new_movement_mod) do
-    GenServer.cast(__MODULE__, {:set_movement, new_movement_mod})
+    GenServer.cast(via_horde(), {:set_movement, new_movement_mod})
   end
 
-  def nudge do
-    GenServer.cast(__MODULE__, :nudge)
+  def nudge() do
+    GenServer.cast(via_horde(), :nudge)
   end
 
   # Callbacks
@@ -160,4 +164,7 @@ defmodule BraitenbergVehiclesLive.Ball do
     dy = Enum.random([-5, -4, -3, 3, 4, 5])
     {dx, dy}
   end
+
+  def via_horde(name \\ __MODULE__),
+    do: {:via, Horde.Registry, {BraitenbergVehiclesLive.HordeRegistry, "#{name}"}}
 end

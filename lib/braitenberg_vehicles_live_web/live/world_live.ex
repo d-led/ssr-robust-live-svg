@@ -157,11 +157,11 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
         </div>
         <div class="flex gap-2 mb-4">
           <span class="badge badge-info font-bold">
-            <strong><%= inspect(@node) %> v<%= @version %></strong>
+            <strong>{@version}{inspect(@node)}</strong>
           </span>
           <%= for {node, version} <- @other_nodes do %>
             <span class="badge badge-outline">
-              <strong><%= inspect(node) %> v<%= version %></strong>
+              {version}{inspect(node)}
             </span>
           <% end %>
         </div>

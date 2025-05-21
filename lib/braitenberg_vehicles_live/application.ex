@@ -16,23 +16,51 @@ defmodule BraitenbergVehiclesLive.Application do
       {DNSCluster,
        query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
       {Cluster.Supervisor, [topologies() |> IO.inspect(label: "chosen cluster config")]},
-      # start pub/sub before the actors
       {Phoenix.PubSub, name: BraitenbergVehiclesLive.PubSub},
       BraitenbergVehiclesLive.StateGuardian,
-      # custom actors
-      Supervisor.child_spec(
-        {BraitenbergVehiclesLive.Ball,
-         cell_config
-         |> Keyword.merge(animation_config)
-         |> Keyword.merge(ball_config)
-         |> Keyword.put(:movement, BraitenbergVehiclesLive.MirrorJump)},
-        id: BraitenbergVehiclesLive.Ball,
-        restart: :permanent,
-        shutdown: 5000,
-        type: :worker
-      ),
+      # Horde registry and supervisor
+      {Horde.Registry,
+       [name: BraitenbergVehiclesLive.HordeRegistry, keys: :unique, members: :auto]},
+      {Horde.DynamicSupervisor,
+       [
+         name: BraitenbergVehiclesLive.HordeSupervisor,
+         strategy: :one_for_one,
+         restart: :transient,
+         distribution_strategy: Horde.UniformDistribution,
+         process_redistribution: :active,
+         members: :auto,
+         max_restarts: 1000,
+         max_seconds: 60
+       ]},
       BraitenbergVehiclesLive.VersionServer,
-      # Start to serve requests, typically the last entry
+      %{
+        id: BraitenbergVehiclesLive.ActorSupervisor,
+        restart: :transient,
+        start:
+          {Task, :start_link,
+           [
+             fn ->
+               ball =
+                 Horde.DynamicSupervisor.start_child(
+                   BraitenbergVehiclesLive.HordeSupervisor,
+                   Supervisor.child_spec(
+                     {BraitenbergVehiclesLive.Ball,
+                      cell_config
+                      |> Keyword.merge(animation_config)
+                      |> Keyword.merge(ball_config)
+                      |> Keyword.put(:movement, BraitenbergVehiclesLive.MirrorJump)},
+                     id: BraitenbergVehiclesLive.Ball,
+                     restart: :permanent,
+                     shutdown: 5000,
+                     type: :worker
+                   )
+                 )
+
+               # list of children
+               [ball]
+             end
+           ]}
+      },
       BraitenbergVehiclesLiveWeb.Endpoint
     ]
 
@@ -45,7 +73,30 @@ defmodule BraitenbergVehiclesLive.Application do
       max_seconds: 60
     ]
 
-    Supervisor.start_link(children, opts)
+    {:ok, sup_pid} = Supervisor.start_link(children, opts)
+
+    # Start Ball via Horde (only if not already running)
+    Horde.DynamicSupervisor.start_child(
+      BraitenbergVehiclesLive.HordeSupervisor,
+      %{
+        id: BraitenbergVehiclesLive.Ball,
+        start: {
+          BraitenbergVehiclesLive.Ball,
+          :start_link,
+          [
+            cell_config
+            |> Keyword.merge(animation_config)
+            |> Keyword.merge(ball_config)
+            |> Keyword.put(:movement, BraitenbergVehiclesLive.MirrorJump)
+          ]
+        },
+        restart: :permanent,
+        shutdown: 5000,
+        type: :worker
+      }
+    )
+
+    {:ok, sup_pid}
   end
 
   # Tell Phoenix to update the endpoint configuration
@@ -58,7 +109,8 @@ defmodule BraitenbergVehiclesLive.Application do
 
   defp topologies() do
     case System.get_env("ERLANG_SEED_NODES", "")
-         |> String.split(",") |> Enum.reject(&String.trim(&1) == "")
+         |> String.split(",")
+         |> Enum.reject(&(String.trim(&1) == ""))
          |> Enum.map(&String.to_atom/1) do
       [] ->
         [
