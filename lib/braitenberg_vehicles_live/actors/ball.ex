@@ -18,7 +18,7 @@ defmodule BraitenbergVehiclesLive.Ball do
 
   def init(opts) do
     # Try to restore state
-    case BraitenbergVehiclesLive.StateGuardian.return_state(__MODULE__) do
+    case BraitenbergVehiclesLive.StateGuardian.return_ball_state() do
       :not_found ->
         Logger.debug("Ball: No previous state found, starting fresh")
 
@@ -134,7 +134,7 @@ defmodule BraitenbergVehiclesLive.Ball do
   # Save state before terminating (e.g., crash)
   def terminate(reason, state) do
     Logger.debug("Ball crashed, saving state")
-    BraitenbergVehiclesLive.StateGuardian.keep_state(__MODULE__, state)
+    BraitenbergVehiclesLive.StateGuardian.keep_ball_state(state)
 
     Phoenix.PubSub.broadcast(
       BraitenbergVehiclesLive.PubSub,

@@ -20,7 +20,7 @@ defmodule BraitenbergVehiclesLive.MixProject do
   def application do
     [
       mod: {BraitenbergVehiclesLive.Application, []},
-      extra_applications: [:logger, :runtime_tools, :mnesia]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
