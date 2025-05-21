@@ -50,7 +50,24 @@ defmodule BraitenbergVehiclesLive.ClusterInfoServer do
         {n, v}
       end)
 
-    %{node: node, version: version, other_nodes: other_nodes}
+    # Query Horde for Ball location
+    ball_node =
+      case Horde.Registry.lookup(
+             BraitenbergVehiclesLive.HordeRegistry,
+             BraitenbergVehiclesLive.Ball
+           ) do
+        [{pid, _value}] -> :erlang.node(pid)
+        [] -> :not_found
+      end
+      # |> IO.inspect(label: "Ball node")
+      # Horde.Registry.select(BraitenbergVehiclesLive.HordeRegistry, [{{:"$1", :_, :_}, [], [:"$1"]}]) |> IO.inspect(label: "all processes")
+
+    %{
+      node: node,
+      version: version,
+      other_nodes: other_nodes,
+      ball_node: ball_node
+    }
   end
 
   defp schedule_poll do

@@ -26,7 +26,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {cx, cy} = Ball.get_coordinates()
     movement_mod = Ball.get_movement_module()
 
-    %{node: node, version: version, other_nodes: other_nodes} =
+    %{node: node, version: version, other_nodes: other_nodes, ball_node: ball_node} =
       BraitenbergVehiclesLive.ClusterInfoServer.get_cluster_info()
 
     {:ok,
@@ -41,7 +41,8 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
        alerts: [],
        node: node,
        version: version,
-       other_nodes: other_nodes
+       other_nodes: other_nodes,
+       ball_node: ball_node
      )}
   end
 
@@ -89,8 +90,11 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {:noreply, update(socket, :alerts, fn alerts -> Enum.reject(alerts, &(&1.id == id)) end)}
   end
 
-  def handle_info({:cluster_info, %{node: node, version: version, other_nodes: other_nodes}}, socket) do
-    {:noreply, assign(socket, node: node, version: version, other_nodes: other_nodes)}
+  def handle_info(
+        {:cluster_info, %{node: node, version: version, other_nodes: other_nodes, ball_node: ball_node}},
+        socket
+      ) do
+    {:noreply, assign(socket, node: node, version: version, other_nodes: other_nodes, ball_node: ball_node)}
   end
 
   def handle_event("set_movement", %{"movement" => movement}, socket) do
@@ -156,6 +160,9 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
               {version}{inspect(node)}
             </span>
           <% end %>
+          <span class="badge badge-soft badge-info">
+            Ball<%= inspect(@ball_node) %>
+          </span>
         </div>
         <div class="flex justify-center relative" style={"width: #{@width}px; height: #{@height}px;"}>
           <svg

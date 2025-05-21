@@ -166,5 +166,5 @@ defmodule BraitenbergVehiclesLive.Ball do
   end
 
   def via_horde(name \\ __MODULE__),
-    do: {:via, Horde.Registry, {BraitenbergVehiclesLive.HordeRegistry, "#{name}"}}
+    do: {:via, Horde.Registry, {BraitenbergVehiclesLive.HordeRegistry, name}}
 end
