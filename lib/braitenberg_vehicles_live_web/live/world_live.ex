@@ -19,6 +19,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     if connected?(socket) do
       Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "coordinates:ball")
       Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "updates:ball")
+      Phoenix.PubSub.subscribe(BraitenbergVehiclesLive.PubSub, "updates:cluster")
     end
 
     # query the ball for its actuals
@@ -86,6 +87,10 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
 
   def handle_info({:remove_alert, id}, socket) do
     {:noreply, update(socket, :alerts, fn alerts -> Enum.reject(alerts, &(&1.id == id)) end)}
+  end
+
+  def handle_info({:cluster_info, %{node: node, version: version, other_nodes: other_nodes}}, socket) do
+    {:noreply, assign(socket, node: node, version: version, other_nodes: other_nodes)}
   end
 
   def handle_event("set_movement", %{"movement" => movement}, socket) do
