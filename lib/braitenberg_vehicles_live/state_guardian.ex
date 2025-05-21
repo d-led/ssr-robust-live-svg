@@ -1,6 +1,8 @@
 defmodule BraitenbergVehiclesLive.StateGuardian do
   use GenServer
 
+  require Logger
+
   @table :actor_state
   @pubsub BraitenbergVehiclesLive.PubSub
   @topic "updates:cluster"
@@ -10,7 +12,7 @@ defmodule BraitenbergVehiclesLive.StateGuardian do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  def setup_mnesia_table do
+  def setup_mnesia_table() do
     nodes = [node() | Node.list()]
     :mnesia.create_schema(nodes)
     :mnesia.start()
@@ -21,43 +23,53 @@ defmodule BraitenbergVehiclesLive.StateGuardian do
   end
 
   @doc """
-  Stores the state for a given module.
+  Stores the state for a given module (async).
   """
   def keep_state(module, state) do
-    :mnesia.transaction(fn ->
-      :mnesia.write({@table, module, state})
-    end)
-    :ok
+    GenServer.call(__MODULE__, {:keep_state, module, state})
   end
 
   @doc """
-  Returns the state for a given module, or :not_found.
+  Returns the state for a given module, or :not_found (sync).
   """
   def return_state(module) do
-    case :mnesia.transaction(fn ->
-           :mnesia.read({@table, module})
-         end) do
-      {:atomic, [{@table, ^module, state}]} -> state
-      _ -> :not_found
-    end
+    GenServer.call(__MODULE__, {:return_state, module})
   end
 
   # GenServer callbacks
 
-  def init(state) do
+  def init(_state) do
+    setup_mnesia_table()
     Phoenix.PubSub.subscribe(@pubsub, @topic)
-    {:ok, state}
+    {:ok, nil}
   end
 
-  def handle_cast({:keep_state, module, state}, data) do
-    {:noreply, Map.put(data, module, state)}
+  def handle_cast({:keep_state, module, state}, _data) do
+    :mnesia.transaction(fn ->
+      :mnesia.write({@table, module, state})
+    end)
+    {:noreply, nil}
   end
 
-  def handle_call({:return_state, module}, _from, data) do
-    case Map.fetch(data, module) do
-      {:ok, state} -> {:reply, state, data}
-      :error -> {:reply, :not_found, data}
-    end
+  def handle_call({:keep_state, module, state}, _from, _data) do
+    Logger.debug("Storing state for #{inspect(module)}")
+    :mnesia.transaction(fn ->
+      :mnesia.write({@table, module, state})
+    end)
+    {:reply, :ok, nil}
+  end
+
+  def handle_call({:return_state, module}, _from, _data) do
+    Logger.debug("Retrieving state for #{inspect(module)}")
+    result =
+      case :mnesia.transaction(fn ->
+             :mnesia.read({@table, module})
+           end) do
+        {:atomic, [{@table, ^module, state}]} -> state
+        wat -> wat |> IO.inspect(label: "WAT") ; :not_found
+      end
+
+    {:reply, result, nil}
   end
 
   def handle_info({:cluster_info, %{other_nodes: other_nodes}}, state) do
