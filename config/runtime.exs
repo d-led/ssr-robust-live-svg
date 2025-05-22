@@ -86,3 +86,5 @@ if config_env() == :prod do
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.
 end
+
+config :logger, level: String.to_atom(System.get_env("LOG_LEVEL", "debug"))
