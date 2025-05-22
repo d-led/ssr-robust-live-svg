@@ -9,7 +9,7 @@
 
 - practice patterns for SVG animation on the server
   - reduce the size of the updates via updating only the transform:
-  ![minimal live updates](./docs/img/minimal-live-updates.png)
+  <img src="./docs/img/minimal-live-updates.png" alt="minimal live updates">
   - extract and use SVG components
 - practice [OTP processes](https://elixirschool.com/en/lessons/advanced/otp_concurrency) that externalize their state
   to support an minimal-interruption restart. Demonstratable via fault injection
