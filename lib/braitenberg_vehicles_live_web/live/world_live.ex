@@ -1,6 +1,7 @@
 defmodule BraitenbergVehiclesLiveWeb.WorldLive do
   alias BraitenbergVehiclesLive.Ball
   use BraitenbergVehiclesLiveWeb, :live_view
+  import BraitenbergVehiclesLiveWeb.CircleComponent
 
   def mount(_params, _session, socket) do
     config =
@@ -213,7 +214,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
               height="auto"
               style="border: 0.5px solid black; display: block; aspect-ratio: #{@width}/#{@height};"
             >
-              <circle cx={@cx} cy={@cy} r={@radius} fill="blue" />
+              <.circle cx={@cx} cy={@cy} r={@radius} />
             </svg>
           </div>
         </div>
