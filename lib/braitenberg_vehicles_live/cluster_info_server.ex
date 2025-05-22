@@ -4,7 +4,7 @@ defmodule BraitenbergVehiclesLive.ClusterInfoServer do
   @name __MODULE__
   @pubsub BraitenbergVehiclesLive.PubSub
   @topic "updates:cluster"
-  @interval 5_000
+  @interval 3_000
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, %{}, name: @name)
