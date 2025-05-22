@@ -42,7 +42,8 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
        node: node,
        version: version,
        other_nodes: other_nodes,
-       ball_node: ball_node
+       ball_node: ball_node,
+       kill_attempts: %{}
      )}
   end
 
@@ -125,9 +126,25 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
 
   def handle_event("kill_node", %{"node" => node_str}, socket) do
     node = String.to_existing_atom(node_str)
-    # Fire and forget: don't wait for response
-    :rpc.cast(node, BraitenbergVehiclesLive.NodeKillSwitch, :kill_node, [1])
-    {:noreply, socket}
+    now = System.monotonic_time(:millisecond)
+    kill_attempts = Map.get(socket.assigns, :kill_attempts, %{})
+
+    {timestamps, kill_attempts} =
+      case Map.get(kill_attempts, node, []) do
+        times ->
+          # keep the last 1 second
+          recent = Enum.filter(times, fn t -> now - t < 1_000 end)
+          {[now | recent], Map.put(kill_attempts, node, [now | recent])}
+      end
+
+    if length(timestamps) >= 3 do
+      # reset attempts after ok
+      kill_attempts = Map.delete(kill_attempts, node)
+      :rpc.cast(node, BraitenbergVehiclesLive.NodeKillSwitch, :kill_node, [1])
+      {:noreply, assign(socket, kill_attempts: kill_attempts)}
+    else
+      {:noreply, assign(socket, kill_attempts: kill_attempts)}
+    end
   end
 
   def render(assigns) do
