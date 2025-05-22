@@ -20,7 +20,7 @@
 
 - a virtual ball is flying around in a box
 - its behavior can be changed at run-time
-- various system failures can also be simulated
+- various system failures can also be triggered/simulated
 - it is expected that the ball continues the movement without a noticeable interruption as long there's one machine available
 
 ![demo](./docs/img/svg-ssr-ball-demo.gif)
