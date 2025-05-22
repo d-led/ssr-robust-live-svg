@@ -123,6 +123,13 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
     {:noreply, socket}
   end
 
+  def handle_event("kill_node", %{"node" => node_str}, socket) do
+    node = String.to_existing_atom(node_str)
+    # Fire and forget: don't wait for response
+    :rpc.cast(node, BraitenbergVehiclesLive.NodeKillSwitch, :kill_node, [1])
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="flex justify-center items-start min-h-screen bg-base-200">
@@ -166,7 +173,17 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
               <span title={to_string(node)}>
                 {version}@{node_name(node)}
               </span>
-              <%!-- <button class="btn btn-outline btn-sm"><.icon name="hero-x-mark-solid" class="size-5 opacity-40 group-hover:opacity-70" /></button> --%>
+              <button
+                phx-click="kill_node"
+                phx-value-node={to_string(node)}
+                class="btn btn-ghost btn-xs ml-1"
+                title="Kill node"
+                style="padding:0 0.2em;vertical-align:middle;"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
             </span>
           <% end %>
           <span class="badge badge-soft badge-info">
