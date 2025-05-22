@@ -149,35 +149,31 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
 
   def render(assigns) do
     ~H"""
-    <div class="flex justify-center items-start min-h-screen bg-base-200">
-      <div class="card shadow-xl bg-base-100 p-6">
-        <div class="grid gap-4 mb-4" style="grid-template-columns: auto 1fr;">
-          <div class="contents">
-            <span class="font-semibold col-start-1">Ball movement:</span>
-            <div class="flex gap-4 col-start-2">
-              <%= for mod <- @available_ball_behaviors do %>
-                <% mod_name = mod |> Module.split() |> List.last() %>
-                <button
-                  phx-click="set_movement"
-                  phx-value-movement={mod}
-                  disabled={@movement == mod}
-                  class={"btn btn-primary btn-sm" <> if(@movement == mod, do: " btn-disabled", else: "")}
-                >
-                  {mod_name}
-                </button>
-              <% end %>
-            </div>
-          </div>
-          <div class="contents">
-            <span class="font-semibold col-start-1">Ball control:</span>
-            <div class="col-start-2">
-              <button phx-click="nudge_ball" class="btn btn-accent btn-sm">
-                Nudge Ball
+    <div class="flex justify-center items-start min-h-screen bg-base-200 px-2">
+      <div class="card shadow-xl bg-base-100 p-4 sm:p-6 w-full max-w-[800px] flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <span class="font-semibold">Ball movement:</span>
+          <div class="flex flex-wrap gap-2">
+            <%= for mod <- @available_ball_behaviors do %>
+              <% mod_name = mod |> Module.split() |> List.last() %>
+              <button
+                phx-click="set_movement"
+                phx-value-movement={mod}
+                disabled={@movement == mod}
+                class={"btn btn-primary btn-sm" <> if(@movement == mod, do: " btn-disabled", else: "")}
+              >
+                {mod_name}
               </button>
-            </div>
+            <% end %>
           </div>
         </div>
-        <div class="flex gap-2 mb-4">
+        <div class="flex flex-col gap-2">
+          <span class="font-semibold">Ball control:</span>
+          <button phx-click="nudge_ball" class="btn btn-accent btn-sm w-auto self-start">
+            Nudge Ball
+          </button>
+        </div>
+        <div class="flex gap-2 flex-wrap py-1">
           <span class="badge badge-info font-bold">
             <strong>
               <span title={to_string(@node)}>
@@ -186,7 +182,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             </strong>
           </span>
           <%= for {node, version} <- @other_nodes do %>
-            <span class="badge badge-outline">
+            <span class="badge badge-outline flex items-center">
               <span title={to_string(node)}>
                 {version}@{node_name(node)}
               </span>
@@ -209,29 +205,29 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             </span>
           </span>
         </div>
-        <div class="flex justify-center relative" style={"width: #{@width}px; height: #{@height}px;"}>
-          <svg
-            viewBox={"0 0 #{@width} #{@height}"}
-            width={@width}
-            height={@height}
-            style="border: 0.5px solid black;"
-          >
-            <circle cx={@cx} cy={@cy} r={@radius} fill="blue" />
-          </svg>
-        </div>
-        <div class="flex justify-center mt-2" style={"width: #{@width}px;"}>
-          <div class="w-full">
-            <%= for alert <- Enum.reverse(@alerts) do %>
-              <div
-                role="alert"
-                class={"alert alert-#{alert.type} mb-2 w-full flex justify-center"}
-                id={"alert-#{alert.id}"}
-                style="pointer-events: none;"
-              >
-                <span style="pointer-events: auto;">{alert.msg}</span>
-              </div>
-            <% end %>
+        <div class="flex justify-center relative w-full">
+          <div class="w-full max-w-[800px]">
+            <svg
+              viewBox={"0 0 #{@width} #{@height}"}
+              width="100%"
+              height="auto"
+              style="border: 0.5px solid black; display: block; aspect-ratio: #{@width}/#{@height};"
+            >
+              <circle cx={@cx} cy={@cy} r={@radius} fill="blue" />
+            </svg>
           </div>
+        </div>
+        <div class="flex flex-col justify-center w-full gap-2">
+          <%= for alert <- Enum.reverse(@alerts) do %>
+            <div
+              role="alert"
+              class={"alert alert-#{alert.type} w-full flex justify-center"}
+              id={"alert-#{alert.id}"}
+              style="pointer-events: none;"
+            >
+              <span style="pointer-events: auto;">{alert.msg}</span>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
