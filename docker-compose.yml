@@ -1,0 +1,57 @@
+services:
+  traefik:
+    build:
+      context: ./traefik
+    ports:
+      - "4000:80"
+      - "4001:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  demo1:
+    build:
+      context: .
+    hostname: demo1.internal
+    environment:
+      - RELEASE_COOKIE=local-8Uyc+UFXA
+      - LOG_LEVEL=debug
+      - ERLANG_SEED_NODES=braitenberg_vehicles_live@demo3.internal
+      - SECRET_KEY_BASE=$${SECRET_KEY_BASE:local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ}
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.demo.rule=PathPrefix(`/`)"
+      - "traefik.http.services.demo.loadbalancer.server.port=4000"
+      - "traefik.http.routers.demo.entrypoints=http"
+
+  demo2:
+    build:
+      context: .
+    hostname: demo2.internal
+    environment:
+      - RELEASE_COOKIE=local-8Uyc+UFXA
+      - LOG_LEVEL=debug
+      - ERLANG_SEED_NODES=braitenberg_vehicles_live@demo1.internal
+      - SECRET_KEY_BASE=$${SECRET_KEY_BASE:local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ}
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.demo.rule=PathPrefix(`/`)"
+      - "traefik.http.services.demo.loadbalancer.server.port=4000"
+      - "traefik.http.routers.demo.entrypoints=http"
+
+  demo3:
+    build:
+      context: .
+    hostname: demo3.internal
+    environment:
+      - RELEASE_COOKIE=local-8Uyc+UFXA
+      - LOG_LEVEL=debug
+      - ERLANG_SEED_NODES=braitenberg_vehicles_live@demo2.internal
+      - SECRET_KEY_BASE=$${SECRET_KEY_BASE:local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ}
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.demo.rule=PathPrefix(`/`)"
+      - "traefik.http.services.demo.loadbalancer.server.port=4000"
+      - "traefik.http.routers.demo.entrypoints=http"

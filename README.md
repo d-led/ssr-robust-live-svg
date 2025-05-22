@@ -24,9 +24,17 @@
 
 ## How to Run
 
-### Locally
+### In Docker Locally
 
-- prerequisite: [Elixir](https://elixir-lang.org/)
+```shell
+docker compose up
+```
+
+&darr;
+
+[http://localhost:4000](http://localhost:4000)
+
+### With Elixir
 
 ```shell
 # once
@@ -39,7 +47,11 @@ mix phx.server
 process-compose
 ```
 
-- use [`process-compose](https://github.com/F1bonacc1/process-compose) to start 3 nodes locally
+&darr;
+
+[http://localhost:4000](http://localhost:4000)
+
+- use [`process-compose`](https://github.com/F1bonacc1/process-compose) to start 3 nodes locally &rarr; (additional node ports: `4001`, `4002`)
 
 ## Architecture
 
@@ -52,6 +64,7 @@ process-compose
 - the state of the ball is continuously externalized to a simple process called [`StateGuardian`](./lib/braitenberg_vehicles_live/state_guardian.ex), local to each node
 - when the ball starts, it may load its state from the `StateGuardian`
 - the svg is rendered as a live view template, updating its position only
+- the list of nodes is updated periodically by [`ClusterInfoServer`](./lib/braitenberg_vehicles_live/cluster_info_server.ex)
 
 ## Details
 

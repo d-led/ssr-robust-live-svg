@@ -1,0 +1,37 @@
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+  [entryPoints.traefik]
+    address = ":8080"
+
+[providers.docker]
+  endpoint = "unix:///var/run/docker.sock"
+  exposedByDefault = false
+
+# disable in prod
+[api]
+  dashboard = true
+  insecure = true
+
+[log]
+  level = "DEBUG"
+
+[http.routers]
+  [http.routers.demo]
+    rule = "PathPrefix(`/`)"
+    service = "demo"
+    entryPoints = ["http", "websocket"]
+
+  [http.routers.traefik]
+    rule = "PathPrefix(`/dashboard`)"
+    service = "api@internal"
+    entryPoints = ["traefik"]
+
+[http.services]
+  [http.services.demo.loadBalancer]
+    [[http.services.demo.loadBalancer.servers]]
+      url = "http://demo1.internal:4000"
+    [[http.services.demo.loadBalancer.servers]]
+      url = "http://demo2.internal:4000"
+    [[http.services.demo.loadBalancer.servers]]
+      url = "http://demo3.internal:4000"
