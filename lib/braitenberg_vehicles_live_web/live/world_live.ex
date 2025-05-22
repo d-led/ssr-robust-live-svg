@@ -174,7 +174,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             Nudge Ball
           </button>
         </div>
-        <div class="flex gap-2 flex-wrap py-1">
+        <div class="flex gap-2 flex-wrap py-2 px-2" style="min-height: 5rem; border: 0.5px solid black;">
           <span class="badge badge-info font-bold">
             <strong>
               <span title={to_string(@node)}>
