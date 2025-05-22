@@ -20,6 +20,8 @@
 - various system failures can also be simulated
 - it is expected that the ball continues the movement without a noticeable interruption as long there's one machine available
 
+![demo](./docs/img/svg-ssr-ball-demo.gif)
+
 ## How to Run
 
 ### Locally
