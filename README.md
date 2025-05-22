@@ -5,6 +5,14 @@
 - **demoware**
 - built with assistance of [GitHub Copilot](https://github.com/features/copilot)
 
+## Motivation
+
+- practice patterns for SVG animation on the server
+- practice [OTP processes](https://elixirschool.com/en/lessons/advanced/otp_concurrency) that externalize their state
+  to support an minimal-interruption restart. Demonstratable via fault injection
+- practice injecting larger faults such as node failures
+- investigate GitHub Copilot-assisted coding in Elixir
+
 ## Functionality
 
 - a virtual ball is flying around in a box
