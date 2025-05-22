@@ -14,6 +14,7 @@
   to support an minimal-interruption restart. Demonstratable via fault injection
 - practice injecting larger faults such as node failures
 - investigate GitHub Copilot-assisted coding in Elixir
+- practice writing mix tasks, e.g. to [bump the app version](./lib/mix/tasks/bump_version.ex)
 
 ## Functionality
 
