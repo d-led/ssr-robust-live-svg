@@ -44,3 +44,9 @@ erl_crash.dump
 /priv/static/assets/
 /priv/static/cache_manifest.json
 *.log
+Dockerfile
+docker-compose.yml
+fly.toml
+README.md
+.gitignore
+traefik/
