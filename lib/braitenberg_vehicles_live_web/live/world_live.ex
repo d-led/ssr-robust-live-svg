@@ -177,14 +177,14 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
         <div class="flex gap-2 flex-wrap py-2 px-2" style="min-height: 5rem; border: 0.5px solid black;">
           <span class="badge badge-info font-bold">
             <strong>
-              <span title={to_string(@node)}>
+              <span>
                 {@version}@{node_name(@node)}
               </span>
             </strong>
           </span>
           <%= for {node, version} <- @other_nodes do %>
             <span class="badge badge-outline flex items-center">
-              <span title={to_string(node)}>
+              <span>
                 {version}@{node_name(node)}
               </span>
               <button
@@ -201,7 +201,7 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             </span>
           <% end %>
           <span class="badge badge-soft badge-info">
-            <span title={to_string(@ball_node)}>
+            <span>
               Ball@{node_name(@ball_node)}
             </span>
           </span>
