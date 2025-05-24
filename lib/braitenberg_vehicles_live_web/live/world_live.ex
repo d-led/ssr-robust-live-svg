@@ -174,7 +174,10 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
             Nudge Ball
           </button>
         </div>
-        <div class="flex gap-2 flex-wrap py-2 px-2" style="min-height: 5rem; border: 0.5px solid black;">
+        <div
+          class="flex gap-2 flex-wrap py-2 px-2"
+          style="min-height: 5rem; border: 0.5px solid black;"
+        >
           <span class="badge badge-info font-bold">
             <strong>
               <span>
@@ -194,8 +197,21 @@ defmodule BraitenbergVehiclesLiveWeb.WorldLive do
                 title="Kill node"
                 style="padding:0 0.2em;vertical-align:middle;"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="inline-block"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </span>

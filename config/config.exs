@@ -14,11 +14,19 @@ config :braitenberg_vehicles_live, :cell,
   width: 800,
   height: 600
 
-config :braitenberg_vehicles_live, :available_ball_behaviors, [
-  BraitenbergVehiclesLive.MirrorJump,
-  BraitenbergVehiclesLive.RandomRebound,
-  BraitenbergVehiclesLive.NonExistentBehavior
-]
+version = Application.spec(:braitenberg_vehicles_live, :vsn) |> to_string()
+
+available_ball_behaviors =
+  [
+    BraitenbergVehiclesLive.MirrorJump,
+    BraitenbergVehiclesLive.RandomRebound,
+    BraitenbergVehiclesLive.NonExistentBehavior
+  ] ++
+    if version == "0.1.1", do: [BraitenbergVehiclesLive.RandomReboundV2NonSticky], else: []
+
+# demo a new version with a new behavior module available
+
+config :braitenberg_vehicles_live, :available_ball_behaviors, available_ball_behaviors
 
 config :braitenberg_vehicles_live, :ball, radius: 20
 

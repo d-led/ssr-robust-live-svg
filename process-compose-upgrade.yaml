@@ -1,0 +1,26 @@
+version: "0.5"
+
+# https://f1bonacc1.github.io/process-compose/
+# process-compose -f process-compose-upgrade.yaml
+
+log_location: processes.log
+log_level: debug
+
+processes:
+  node1v1:
+    command: "./bin/braitenberg_vehicles_live start"
+    working_dir: "./_build/demo/v1"
+    environment:
+      - "PORT=4000"
+      - "RELEASE_NODE=node1v1@127.0.0.1"
+      - "RELEASE_COOKIE=demo_cookie"
+      - "SECRET_KEY_BASE=local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ"
+
+  node1v2:
+    command: "./bin/braitenberg_vehicles_live start"
+    working_dir: "./_build/demo/v2"
+    environment:
+      - "PORT=4001"
+      - "RELEASE_NODE=node1v2@127.0.0.1"
+      - "RELEASE_COOKIE=demo_cookie"
+      - "SECRET_KEY_BASE=local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ"
