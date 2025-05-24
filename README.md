@@ -15,7 +15,7 @@
 - practice injecting larger faults such as node failures
 - investigate GitHub Copilot-assisted coding in Elixir
 - practice writing mix tasks, e.g. to [bump the app version](./lib/mix/tasks/bump_version.ex)
-- practice a whole application hot code upgrade without directly using the ["advanced"](https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-hot-code-upgrades) [appup/relup](https://blog.appsignal.com/2021/07/27/a-guide-to-hot-code-reloading-in-elixir.html) approach.
+- practice a whole application hot code upgrade without directly using a known ["advanced"](https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-hot-code-upgrades) [approach](https://blog.appsignal.com/2021/07/27/a-guide-to-hot-code-reloading-in-elixir.html).
 
 ## Functionality
 
