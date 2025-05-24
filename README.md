@@ -59,12 +59,8 @@ process-compose
 
 ### Hot Code Updates
 
-- process
-  - start a new version alongside the old one in a cluster
-  - the new version contains a new ball movement module: [`RandomReboundV2NonSticky`](./lib/braitenberg_vehicles_live/actor_behaviors/random_rebound_v2_non_sticky.ex)
+- the demo fix: the new version contains a new ball movement module: [`RandomReboundV2NonSticky`](./lib/braitenberg_vehicles_live/actor_behaviors/random_rebound_v2_non_sticky.ex)
 - [`release-two-versions.sh`](./scripts/release-two-versions.sh) simulates the build of two versions with one compiled without the new module. The new behavior name is pre-configured and added in a particular version for the demo.
-
-
 - demo
   - start two versions running alongside in a cluster
   - look at the views of both versions, noting the new module
