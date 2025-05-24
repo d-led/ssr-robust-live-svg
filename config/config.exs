@@ -12,7 +12,7 @@ config :braitenberg_vehicles_live,
 
 config :braitenberg_vehicles_live, :cell,
   width: 800,
-  height: 600
+  height: 400
 
 version = Application.spec(:braitenberg_vehicles_live, :vsn) |> to_string()
 
