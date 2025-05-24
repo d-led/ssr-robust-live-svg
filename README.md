@@ -15,6 +15,7 @@
 - practice injecting larger faults such as node failures
 - investigate GitHub Copilot-assisted coding in Elixir
 - practice writing mix tasks, e.g. to [bump the app version](./lib/mix/tasks/bump_version.ex)
+- practice a whole application [hot code upgrade](https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-hot-code-upgrades) without using [appup/relup](https://blog.appsignal.com/2021/07/27/a-guide-to-hot-code-reloading-in-elixir.html)
 
 ## Functionality
 
@@ -55,6 +56,22 @@ process-compose
 [http://localhost:4000](http://localhost:4000)
 
 - use [`process-compose`](https://github.com/F1bonacc1/process-compose) to start 3 nodes locally &rarr; (additional node ports: `4001`, `4002`)
+
+### Hot Code Updates
+
+- process
+  - start a new version alongside the old one in a cluster
+  - the new version contains a new ball movement module: [`RandomReboundV2NonSticky`](./lib/braitenberg_vehicles_live/actor_behaviors/random_rebound_v2_non_sticky.ex)
+- automated simulation: [`release-two-versions.sh`](./scripts/release-two-versions.sh) simulates the build of two version, with one compiled without the new version. The config has the new behavior name pre-configured and added in a particular version for the demo.
+
+![hot code update demo](./docs/img/svg-ssr-ball-demo-hot-code-upgrade.gif)
+
+- demo
+  - start two versions running alongside in a cluster
+  - look at the views of both versions, noting the new module
+  - try to switch over to the new module while the ball runs on the old instance &rarr; safe failure
+  - take down the old node &rarr; the new node takes over but still running the old behavior
+  - switch over to the new behavior
 
 ## Architecture
 
