@@ -91,11 +91,7 @@ defmodule BraitenbergVehiclesLive.Ball do
     }
 
     # if we're still alive, broadcast the new movement module
-    Phoenix.PubSub.broadcast(
-      BraitenbergVehiclesLive.PubSub,
-      @updates_topic,
-      {:ball_behavior_changed_to, new_movement_module}
-    )
+    publish_update({:ball_behavior_changed_to, new_movement_module})
 
     {:noreply, new_state}
   end
@@ -110,11 +106,7 @@ defmodule BraitenbergVehiclesLive.Ball do
     Logger.debug("Ball crashed, saving state")
     BraitenbergVehiclesLive.StateGuardian.keep_ball_state(state)
 
-    Phoenix.PubSub.broadcast(
-      BraitenbergVehiclesLive.PubSub,
-      @updates_topic,
-      {:ball_error, reason}
-    )
+    publish_update({:ball_error, reason})
 
     :ok
   end
@@ -125,28 +117,24 @@ defmodule BraitenbergVehiclesLive.Ball do
     Process.send_after(self(), :tick, interval)
   end
 
+  defp broadcast(topic, message),
+    do:
+      Phoenix.PubSub.broadcast(
+        BraitenbergVehiclesLive.PubSub,
+        topic,
+        message
+      )
+
   defp publish_coordinates(cx, cy) do
-    Phoenix.PubSub.broadcast(
-      BraitenbergVehiclesLive.PubSub,
-      "coordinates:ball",
-      {:ball_coordinates, %{cx: cx, cy: cy}}
-    )
+    broadcast("coordinates:ball", {:ball_coordinates, %{cx: cx, cy: cy}})
   end
 
   defp publish_state_to_later_restore(state) do
-    Phoenix.PubSub.broadcast(
-      BraitenbergVehiclesLive.PubSub,
-      "state:ball",
-      {:ball_state, state}
-    )
+    broadcast("state:ball", {:ball_state, state})
   end
 
   defp publish_update(update) do
-    Phoenix.PubSub.broadcast(
-      BraitenbergVehiclesLive.PubSub,
-      @updates_topic,
-      update
-    )
+    broadcast(@updates_topic, update)
   end
 
   defp random_nonzero_delta do
