@@ -1,7 +1,9 @@
 defmodule BraitenbergVehiclesLive.RandomReboundTest do
   use ExUnit.Case
 
-  alias BraitenbergVehiclesLive.RandomRebound
+  # switch to this module to show the bug
+  # @random_rebound_module BraitenbergVehiclesLive.RandomRebound
+  @random_rebound_module BraitenbergVehiclesLive.RandomReboundV2NonSticky
 
   defp move_ball(opts) do
     # Provide defaults and allow overrides
@@ -17,8 +19,8 @@ defmodule BraitenbergVehiclesLive.RandomReboundTest do
       }
       |> Map.merge(opts)
 
-    # The movement struct is not used in logic, so just pass %RandomRebound{}
-    BallMovement.move(%RandomRebound{}, state)
+    # The movement struct is not used in logic, so just pass @random_rebound_module
+    BallMovement.move(struct(@random_rebound_module), state)
   end
 
   test "moves normally when not near any wall" do
