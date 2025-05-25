@@ -22,25 +22,10 @@ defmodule BraitenbergVehiclesLive.Ball do
       :not_found ->
         Logger.debug("Ball: No previous state found, starting fresh")
 
-        width = Keyword.get(opts, :width)
-        height = Keyword.get(opts, :height)
-        radius = Keyword.get(opts, :radius)
         interval = Keyword.get(opts, :interval)
         movement_mod = Keyword.get(opts, :movement)
-        movement = struct(movement_mod)
 
-        state = %{
-          cx: div(width, 2),
-          cy: div(height, 2),
-          dx: 4,
-          dy: 3,
-          width: width,
-          height: height,
-          radius: radius,
-          interval: interval,
-          movement: movement,
-          last_good_movement_module: movement_mod
-        }
+        state = initial_state(opts)
 
         schedule_tick(interval)
 
@@ -174,6 +159,28 @@ defmodule BraitenbergVehiclesLive.Ball do
     {dx, dy}
   end
 
-  def via_horde(name \\ __MODULE__),
+  defp initial_state(opts) do
+    width = Keyword.get(opts, :width)
+    height = Keyword.get(opts, :height)
+    radius = Keyword.get(opts, :radius)
+    interval = Keyword.get(opts, :interval)
+    movement_mod = Keyword.get(opts, :movement)
+    movement = struct(movement_mod)
+
+    %{
+      cx: div(width, 2),
+      cy: div(height, 2),
+      dx: 4,
+      dy: 3,
+      width: width,
+      height: height,
+      radius: radius,
+      interval: interval,
+      movement: movement,
+      last_good_movement_module: movement_mod
+    }
+  end
+
+  defp via_horde(name \\ __MODULE__),
     do: {:via, Horde.Registry, {BraitenbergVehiclesLive.HordeRegistry, name}}
 end
