@@ -96,3 +96,26 @@ scripts/run-two-versions.sh
 ## Details
 
 - deployable on [fly.io](https://fly.io), see [`fly.toml`](./fly.toml)
+
+## Architecture at a Glance
+
+```mermaid
+flowchart TB
+    subgraph Replica2
+    Ball-- state changes -->BallStateTopic@{ shape: das, label: "state:ball" }
+    Ball-- updates -->BallUpdatesTopic@{ shape: das, label: "updates:ball" }
+    Ball-- coordinate changes -->BallCoordinatesTopic@{ shape: das, label: "coordinates:ball" }
+    StateGuardian1[StateGuardian] -- subscribed to --> BallStateTopic
+    end
+    subgraph Replica1
+    StateGuardian2[StateGuardian] -- subscribed to --> BallStateTopic
+    end
+```
+
+## Trade-Offs
+
+- Will it scale? &rarr; What do you mean by 'scale' exactly?
+- Why publish each ball state to the state guardian? Isn't it too chatty/expensive? &rarr; Yes. I wanted to demo simulating a whole node going down on which the singleton ball is running. Without it, the take-over of the ball by another node wouldn't look that spectacular.
+- Why not use technology XYZ for this? &rarr; Yes. That'd be nice, although, Phoenix LiveView, Elixir and Erlang provide so many primitives out of the box, making such architectural sketches effective, requiring fewer infrastructural moving parts.
+- Why not just use the standard Erlang/OTP mechanism for the hot code upgrade? &rarr; Yes, that'd be nice as well, and has been tried and tested all around the world. Many articles and docs on the subject suggest trying alternative approaches these days. Knowing something is possible and having tried it may lie far apart.
+- Why not demo XYZ as well? &rarr; Yes, that'd be nice too. There's no-one to stop you from doing it.
