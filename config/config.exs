@@ -18,11 +18,11 @@ version = Application.spec(:braitenberg_vehicles_live, :vsn) |> to_string()
 
 available_ball_behaviors =
   [
-    BraitenbergVehiclesLive.MirrorJump,
-    BraitenbergVehiclesLive.RandomRebound,
-    BraitenbergVehiclesLive.NonExistentBehavior
+    SsrRobustLiveSvg.MirrorJump,
+    SsrRobustLiveSvg.RandomRebound,
+    SsrRobustLiveSvg.NonExistentBehavior
   ] ++
-    if version == "0.1.1", do: [BraitenbergVehiclesLive.RandomReboundV2NonSticky], else: []
+    if version == "0.1.1", do: [SsrRobustLiveSvg.RandomReboundV2NonSticky], else: []
 
 # demo a new version with a new behavior module available
 
@@ -33,17 +33,17 @@ config :braitenberg_vehicles_live, :ball, radius: 20
 config :braitenberg_vehicles_live, :animation, interval: 30
 
 # Configures the endpoint
-config :braitenberg_vehicles_live, BraitenbergVehiclesLiveWeb.Endpoint,
+config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [
-      html: BraitenbergVehiclesLiveWeb.ErrorHTML,
-      json: BraitenbergVehiclesLiveWeb.ErrorJSON
+      html: SsrRobustLiveSvgWeb.ErrorHTML,
+      json: SsrRobustLiveSvgWeb.ErrorJSON
     ],
     layout: false
   ],
-  pubsub_server: BraitenbergVehiclesLive.PubSub,
+  pubsub_server: SsrRobustLiveSvg.PubSub,
   live_view: [signing_salt: "f3gG5u6X"]
 
 # Configure esbuild (the version is required)

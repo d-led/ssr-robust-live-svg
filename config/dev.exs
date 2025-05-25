@@ -6,7 +6,7 @@ import Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :braitenberg_vehicles_live, BraitenbergVehiclesLiveWeb.Endpoint,
+config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
@@ -44,7 +44,7 @@ config :braitenberg_vehicles_live, BraitenbergVehiclesLiveWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :braitenberg_vehicles_live, BraitenbergVehiclesLiveWeb.Endpoint,
+config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
   live_reload: [
     web_console_logger: true,
     patterns: [
