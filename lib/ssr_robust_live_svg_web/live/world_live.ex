@@ -3,6 +3,8 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
   use SsrRobustLiveSvgWeb, :live_view
   import SsrRobustLiveSvgWeb.CircleComponent
 
+  @presence_topic "world:presence"
+
   def mount(_params, _session, socket) do
     config =
       Keyword.merge(
@@ -21,10 +23,11 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "coordinates:ball")
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "updates:ball")
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "updates:cluster")
+      Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, @presence_topic)
 
       SsrRobustLiveSvgWeb.Presence.track(
         self(),
-        "world:presence",
+        @presence_topic,
         socket.id || inspect(self()),
         %{}
       )
@@ -36,6 +39,8 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
 
     %{node: node, version: version, other_nodes: other_nodes, ball_node: ball_node} =
       SsrRobustLiveSvg.ClusterInfoServer.get_cluster_info()
+
+    now_online_count = SsrRobustLiveSvgWeb.Presence.list(@presence_topic) |> map_size()
 
     {:ok,
      assign(socket,
@@ -51,8 +56,19 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
        version: version,
        other_nodes: other_nodes,
        ball_node: ball_node,
-       kill_attempts: %{}
+       kill_attempts: %{},
+       now_online_count: now_online_count
      )}
+  end
+
+  def handle_info("presence_diff", %{joins: _, leaves: _}, socket) do
+    total = SsrRobustLiveSvgWeb.Presence.list(@presence_topic) |> map_size()
+    {:noreply, assign(socket, now_online_count: total)}
+  end
+
+  def handle_info(%Phoenix.Socket.Broadcast{}, socket) do
+    total = SsrRobustLiveSvgWeb.Presence.list(@presence_topic) |> map_size()
+    {:noreply, assign(socket, now_online_count: total)}
   end
 
   def handle_info({:ball_coordinates, %{cx: cx, cy: cy}}, socket) do
@@ -226,6 +242,11 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
           <span class="badge badge-soft badge-info">
             <span>
               Ball@{node_name(@ball_node)}
+            </span>
+          </span>
+          <span class="badge badge-success">
+            <span>
+              Users online: {@now_online_count}
             </span>
           </span>
         </div>
