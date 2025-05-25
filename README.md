@@ -101,8 +101,8 @@ scripts/run-two-versions.sh
 
 ```mermaid
 flowchart TB
-    User1["fa:fa-user User"] -- interacts with --> LiveView2
-    User2["fa:fa-user"] -- interacts with --> LiveView1
+    User1("fa:fa-user User") -- interacts with --> LiveView2
+    User2("fa:fa-user User") -- interacts with --> LiveView1
     subgraph Replica2
     HordeSupervisor1([HordeSupervisor]) -- schedules start of --> Ball
     Ball(("Ball (singleton)"))-- publishes state changes to -->BallStateTopic@{ shape: das, label: "state:ball" }
