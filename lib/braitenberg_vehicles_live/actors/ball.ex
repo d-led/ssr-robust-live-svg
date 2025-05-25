@@ -20,7 +20,7 @@ defmodule BraitenbergVehiclesLive.Ball do
     # Try to restore state
     case BraitenbergVehiclesLive.StateGuardian.return_ball_state() do
       :not_found ->
-        Logger.debug("Ball: No previous state found, starting fresh")
+        Logger.debug("Ball: No previous state found, starting afresh")
 
         interval = Keyword.get(opts, :interval)
         movement_mod = Keyword.get(opts, :movement)
@@ -29,11 +29,7 @@ defmodule BraitenbergVehiclesLive.Ball do
 
         schedule_tick(interval)
 
-        Phoenix.PubSub.broadcast(
-          BraitenbergVehiclesLive.PubSub,
-          @updates_topic,
-          {:ball_behavior_changed_to, movement_mod}
-        )
+        publish_update({:ball_behavior_changed_to, movement_mod})
 
         {:ok, state}
 
@@ -42,17 +38,9 @@ defmodule BraitenbergVehiclesLive.Ball do
 
         schedule_tick(restored_state.interval)
 
-        Phoenix.PubSub.broadcast(
-          BraitenbergVehiclesLive.PubSub,
-          @updates_topic,
-          {:ball_state_restored, restored_state.last_good_movement_module}
-        )
+        publish_update({:ball_state_restored, restored_state.last_good_movement_module})
 
-        Phoenix.PubSub.broadcast(
-          BraitenbergVehiclesLive.PubSub,
-          @updates_topic,
-          {:ball_behavior_changed_to, restored_state.last_good_movement_module}
-        )
+        publish_update({:ball_behavior_changed_to, restored_state.last_good_movement_module})
 
         {:ok, restored_state}
     end
@@ -150,6 +138,14 @@ defmodule BraitenbergVehiclesLive.Ball do
       BraitenbergVehiclesLive.PubSub,
       "state:ball",
       {:ball_state, state}
+    )
+  end
+
+  defp publish_update(update) do
+    Phoenix.PubSub.broadcast(
+      BraitenbergVehiclesLive.PubSub,
+      @updates_topic,
+      update
     )
   end
 
