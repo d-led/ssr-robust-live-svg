@@ -104,6 +104,11 @@ defmodule BraitenbergVehiclesLive.Ball do
   # Save state before terminating (e.g., crash)
   def terminate(reason, state) do
     Logger.debug("Ball crashed, saving state")
+
+    # This line originates from the demo when StateGuardian
+    # wasn't subscribe to all ball state changes.
+    # It can be seen as a last resort attempt to save the state before crashing.
+    # If the whole node crashed, this would not have helped.
     BraitenbergVehiclesLive.StateGuardian.keep_ball_state(state)
 
     publish_update({:ball_error, reason})
