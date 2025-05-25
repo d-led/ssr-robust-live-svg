@@ -17,12 +17,12 @@ defmodule SsrRobustLiveSvg.Application do
        query: Application.get_env(:ssr_robust_live_svg, :dns_cluster_query) || :ignore},
       {Cluster.Supervisor, [topologies() |> IO.inspect(label: "chosen cluster config")]},
       {Phoenix.PubSub, name: SsrRobustLiveSvg.PubSub},
+      SsrRobustLiveSvgWeb.Presence,
       SsrRobustLiveSvg.ClusterInfoServer,
       SsrRobustLiveSvg.VersionServer,
       SsrRobustLiveSvg.StateGuardian,
       # Horde registry and supervisor
-      {Horde.Registry,
-       [name: SsrRobustLiveSvg.HordeRegistry, keys: :unique, members: :auto]},
+      {Horde.Registry, [name: SsrRobustLiveSvg.HordeRegistry, keys: :unique, members: :auto]},
       {Horde.DynamicSupervisor,
        [
          name: SsrRobustLiveSvg.HordeSupervisor,

@@ -21,6 +21,13 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "coordinates:ball")
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "updates:ball")
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "updates:cluster")
+
+      SsrRobustLiveSvgWeb.Presence.track(
+        self(),
+        "world:presence",
+        socket.id || inspect(self()),
+        %{}
+      )
     end
 
     # query the ball for its actuals

@@ -15,8 +15,7 @@ config :ssr_robust_live_svg, SsrRobustLiveSvgWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "lButPnSi7iMkke0T3xIovclb475/kml7HR8cqjK3z/2mHgSS7Iy6HqfpMC8pcvo5",
   watchers: [
-    esbuild:
-      {Esbuild, :install_and_run, [:ssr_robust_live_svg, ~w(--sourcemap=inline --watch)]},
+    esbuild: {Esbuild, :install_and_run, [:ssr_robust_live_svg, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:ssr_robust_live_svg, ~w(--watch)]}
   ]
 

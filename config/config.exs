@@ -75,6 +75,9 @@ config :logger, :default_formatter,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Presence configuration
+config :ssr_robust_live_svg, SsrRobustLiveSvgWeb.Presence, pubsub_server: SsrRobustLiveSvg.PubSub
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
