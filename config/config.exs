@@ -7,14 +7,14 @@
 # General application configuration
 import Config
 
-config :braitenberg_vehicles_live,
+config :ssr_robust_live_svg,
   generators: [timestamp_type: :utc_datetime]
 
-config :braitenberg_vehicles_live, :cell,
+config :ssr_robust_live_svg, :cell,
   width: 800,
   height: 400
 
-version = Application.spec(:braitenberg_vehicles_live, :vsn) |> to_string()
+version = Application.spec(:ssr_robust_live_svg, :vsn) |> to_string()
 
 available_ball_behaviors =
   [
@@ -26,14 +26,14 @@ available_ball_behaviors =
 
 # demo a new version with a new behavior module available
 
-config :braitenberg_vehicles_live, :available_ball_behaviors, available_ball_behaviors
+config :ssr_robust_live_svg, :available_ball_behaviors, available_ball_behaviors
 
-config :braitenberg_vehicles_live, :ball, radius: 20
+config :ssr_robust_live_svg, :ball, radius: 20
 
-config :braitenberg_vehicles_live, :animation, interval: 30
+config :ssr_robust_live_svg, :animation, interval: 30
 
 # Configures the endpoint
-config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
+config :ssr_robust_live_svg, SsrRobustLiveSvgWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
@@ -49,7 +49,7 @@ config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  braitenberg_vehicles_live: [
+  ssr_robust_live_svg: [
     args:
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -59,7 +59,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "4.0.9",
-  braitenberg_vehicles_live: [
+  ssr_robust_live_svg: [
     args: ~w(
       --input=assets/css/app.css
       --output=priv/static/assets/css/app.css

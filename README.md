@@ -59,7 +59,7 @@ process-compose
 
 ### Hot Code Updates
 
-- the demo fix: the new version contains a new ball movement module: [`RandomReboundV2NonSticky`](./lib/braitenberg_vehicles_live/actor_behaviors/random_rebound_v2_non_sticky.ex)
+- the demo fix: the new version contains a new ball movement module: [`RandomReboundV2NonSticky`](./lib/ssr_robust_live_svg/actor_behaviors/random_rebound_v2_non_sticky.ex)
 - [`release-two-versions.sh`](./scripts/release-two-versions.sh) simulates the build of two versions with one compiled without the new module. The new behavior name is pre-configured and added in a particular version for the demo.
 - demo
   - start two versions running alongside in a cluster
@@ -83,15 +83,15 @@ scripts/run-two-versions.sh
 ## Architecture
 
 - the application is clustered
-- a singleton process [`Ball`](./lib/braitenberg_vehicles_live/actors/ball.ex) runs on one of the nodes in the cluster
-- the ball is flying around in a box with an injectable behavior, fulfilling a [`BallMovement`](./lib/braitenberg_vehicles_live/protocols/ball_movement.ex) protocol
+- a singleton process [`Ball`](./lib/ssr_robust_live_svg/actors/ball.ex) runs on one of the nodes in the cluster
+- the ball is flying around in a box with an injectable behavior, fulfilling a [`BallMovement`](./lib/ssr_robust_live_svg/protocols/ball_movement.ex) protocol
 - the list of movement behavior modules can be found in the [config `:available_ball_behaviors`](./config/config.exs)
 - the config includes one non-existent module `NonExistentBehavior` which simulates a sub-system update fault
 - the nodes (**dangerously** &rarr; demoware!) expose a kill switch which stops a node with an non-zero exit code, triggering a restart of the ball process on another node
-- the state of the ball is continuously externalized to a simple process called [`StateGuardian`](./lib/braitenberg_vehicles_live/state_guardian.ex), local to each node
+- the state of the ball is continuously externalized to a simple process called [`StateGuardian`](./lib/ssr_robust_live_svg/state_guardian.ex), local to each node
 - when the ball starts, it may load its state from the `StateGuardian`
 - the svg is rendered as a live view template, updating its position only
-- the list of nodes is updated periodically by [`ClusterInfoServer`](./lib/braitenberg_vehicles_live/cluster_info_server.ex)
+- the list of nodes is updated periodically by [`ClusterInfoServer`](./lib/ssr_robust_live_svg/cluster_info_server.ex)
 
 ## Details
 

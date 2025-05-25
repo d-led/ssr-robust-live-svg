@@ -8,7 +8,7 @@ log_level: debug
 
 processes:
   node1v1:
-    command: "./bin/braitenberg_vehicles_live start"
+    command: "./bin/ssr_robust_live_svg start"
     working_dir: "./_build/demo/v1"
     environment:
       - "PORT=4000"
@@ -17,7 +17,7 @@ processes:
       - "SECRET_KEY_BASE=local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ"
 
   node1v2:
-    command: "./bin/braitenberg_vehicles_live start"
+    command: "./bin/ssr_robust_live_svg start"
     working_dir: "./_build/demo/v2"
     environment:
       - "PORT=4001"

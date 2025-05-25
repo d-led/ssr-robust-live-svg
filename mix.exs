@@ -3,7 +3,7 @@ defmodule SsrRobustLiveSvg.MixProject do
 
   def project do
     [
-      app: :braitenberg_vehicles_live,
+      app: :ssr_robust_live_svg,
       version: "0.1.0",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -68,10 +68,10 @@ defmodule SsrRobustLiveSvg.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind braitenberg_vehicles_live", "esbuild braitenberg_vehicles_live"],
+      "assets.build": ["tailwind ssr_robust_live_svg", "esbuild ssr_robust_live_svg"],
       "assets.deploy": [
-        "tailwind braitenberg_vehicles_live --minify",
-        "esbuild braitenberg_vehicles_live --minify",
+        "tailwind ssr_robust_live_svg --minify",
+        "esbuild ssr_robust_live_svg --minify",
         "phx.digest"
       ]
     ]

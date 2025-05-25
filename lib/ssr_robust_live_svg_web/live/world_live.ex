@@ -6,8 +6,8 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
   def mount(_params, _session, socket) do
     config =
       Keyword.merge(
-        Application.get_env(:braitenberg_vehicles_live, :cell, []),
-        Application.get_env(:braitenberg_vehicles_live, :ball, [])
+        Application.get_env(:ssr_robust_live_svg, :cell, []),
+        Application.get_env(:ssr_robust_live_svg, :ball, [])
       )
 
     width = Keyword.get(config, :width)
@@ -15,7 +15,7 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
     radius = Keyword.get(config, :radius)
 
     available_ball_behaviors =
-      Application.get_env(:braitenberg_vehicles_live, :available_ball_behaviors)
+      Application.get_env(:ssr_robust_live_svg, :available_ball_behaviors)
 
     if connected?(socket) do
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "coordinates:ball")

@@ -15,7 +15,7 @@ services:
     environment:
       - RELEASE_COOKIE=local-8Uyc+UFXA
       - LOG_LEVEL=debug
-      - ERLANG_SEED_NODES=braitenberg_vehicles_live@demo3.internal
+      - ERLANG_SEED_NODES=ssr_robust_live_svg@demo3.internal
       - SECRET_KEY_BASE=$${SECRET_KEY_BASE:local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ}
     restart: on-failure
     labels:
@@ -31,7 +31,7 @@ services:
     environment:
       - RELEASE_COOKIE=local-8Uyc+UFXA
       - LOG_LEVEL=debug
-      - ERLANG_SEED_NODES=braitenberg_vehicles_live@demo1.internal
+      - ERLANG_SEED_NODES=ssr_robust_live_svg@demo1.internal
       - SECRET_KEY_BASE=$${SECRET_KEY_BASE:local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ}
     restart: on-failure
     labels:
@@ -47,7 +47,7 @@ services:
     environment:
       - RELEASE_COOKIE=local-8Uyc+UFXA
       - LOG_LEVEL=debug
-      - ERLANG_SEED_NODES=braitenberg_vehicles_live@demo2.internal
+      - ERLANG_SEED_NODES=ssr_robust_live_svg@demo2.internal
       - SECRET_KEY_BASE=$${SECRET_KEY_BASE:local-H/lEgup4NKPhC58mpDBxrVFL0N20GePlaKozg1CaFDAKlBVMBkuLFYEvVp1/45MQ}
     restart: on-failure
     labels:

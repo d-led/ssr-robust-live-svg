@@ -2,4 +2,4 @@
 set -eu
 
 cd -P -- "$(dirname -- "$0")"
-PHX_SERVER=true exec ./braitenberg_vehicles_live start
+PHX_SERVER=true exec ./ssr_robust_live_svg start

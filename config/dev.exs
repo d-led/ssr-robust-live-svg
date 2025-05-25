@@ -6,7 +6,7 @@ import Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
+config :ssr_robust_live_svg, SsrRobustLiveSvgWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
@@ -16,8 +16,8 @@ config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
   secret_key_base: "lButPnSi7iMkke0T3xIovclb475/kml7HR8cqjK3z/2mHgSS7Iy6HqfpMC8pcvo5",
   watchers: [
     esbuild:
-      {Esbuild, :install_and_run, [:braitenberg_vehicles_live, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:braitenberg_vehicles_live, ~w(--watch)]}
+      {Esbuild, :install_and_run, [:ssr_robust_live_svg, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:ssr_robust_live_svg, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -44,17 +44,17 @@ config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :braitenberg_vehicles_live, SsrRobustLiveSvgWeb.Endpoint,
+config :ssr_robust_live_svg, SsrRobustLiveSvgWeb.Endpoint,
   live_reload: [
     web_console_logger: true,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"lib/braitenberg_vehicles_live_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/ssr_robust_live_svg_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :braitenberg_vehicles_live, dev_routes: true
+config :ssr_robust_live_svg, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

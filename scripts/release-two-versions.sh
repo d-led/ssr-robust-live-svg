@@ -6,7 +6,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 cd "${SCRIPT_DIR}/.."
 
-new_module="lib/braitenberg_vehicles_live/actor_behaviors/random_rebound_v2_non_sticky.ex"
+new_module="lib/ssr_robust_live_svg/actor_behaviors/random_rebound_v2_non_sticky.ex"
 
 echo "--== releasing the first version "
 mv "${new_module}" "{new_module}.tmp" || true

@@ -7,14 +7,14 @@ defmodule SsrRobustLiveSvg.Application do
 
   @impl true
   def start(_type, _args) do
-    ball_config = Application.get_env(:braitenberg_vehicles_live, :ball, [])
-    cell_config = Application.get_env(:braitenberg_vehicles_live, :cell, [])
-    animation_config = Application.get_env(:braitenberg_vehicles_live, :animation, [])
+    ball_config = Application.get_env(:ssr_robust_live_svg, :ball, [])
+    cell_config = Application.get_env(:ssr_robust_live_svg, :cell, [])
+    animation_config = Application.get_env(:ssr_robust_live_svg, :animation, [])
 
     children = [
       SsrRobustLiveSvgWeb.Telemetry,
       {DNSCluster,
-       query: Application.get_env(:braitenberg_vehicles_live, :dns_cluster_query) || :ignore},
+       query: Application.get_env(:ssr_robust_live_svg, :dns_cluster_query) || :ignore},
       {Cluster.Supervisor, [topologies() |> IO.inspect(label: "chosen cluster config")]},
       {Phoenix.PubSub, name: SsrRobustLiveSvg.PubSub},
       SsrRobustLiveSvg.ClusterInfoServer,

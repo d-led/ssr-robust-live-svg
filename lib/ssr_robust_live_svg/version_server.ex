@@ -8,7 +8,7 @@ defmodule SsrRobustLiveSvg.VersionServer do
   def init(_), do: {:ok, nil}
 
   def handle_call(:version, _from, state) do
-    version = Application.spec(:braitenberg_vehicles_live, :vsn) |> to_string()
+    version = Application.spec(:ssr_robust_live_svg, :vsn) |> to_string()
     {:reply, version, state}
   end
 

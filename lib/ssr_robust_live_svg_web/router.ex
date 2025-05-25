@@ -26,7 +26,7 @@ defmodule SsrRobustLiveSvgWeb.Router do
   # end
 
   # Enable LiveDashboard in development
-  if Application.compile_env(:braitenberg_vehicles_live, :dev_routes) do
+  if Application.compile_env(:ssr_robust_live_svg, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
     # If your application does not have an admins-only section yet,
