@@ -29,10 +29,10 @@ defmodule SsrRobustLiveSvg.Application do
          strategy: :one_for_one,
          restart: :transient,
          distribution_strategy: Horde.UniformDistribution,
-         process_redistribution: :active,
+         process_redistribution: :passive,
          members: :auto,
-         max_restarts: 1000,
-         max_seconds: 60
+         max_restarts: 90,
+         max_seconds: 30
        ]},
       %{
         id: SsrRobustLiveSvg.ActorSupervisor,
