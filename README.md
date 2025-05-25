@@ -131,3 +131,8 @@ flowchart TB
 ## More Failure Modes
 
 - if the last known state has been a new module, downgrading will lead to a system failure
+
+## Well-Known Patterns Identifiable in the Demo
+
+- [Decoupling deployment from release](https://www.thoughtworks.com/en-de/radar/techniques/decoupling-deployment-from-release)
+- Keeping the state of a process outside of it (e.g. in another, logic-less process)
