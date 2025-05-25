@@ -101,14 +101,21 @@ scripts/run-two-versions.sh
 
 ```mermaid
 flowchart TB
+    User1["fa:fa-user User"] -- interacts with --> LiveView2
+    User2["fa:fa-user"] -- interacts with --> LiveView1
     subgraph Replica2
-    Ball-- state changes -->BallStateTopic@{ shape: das, label: "state:ball" }
-    Ball-- updates -->BallUpdatesTopic@{ shape: das, label: "updates:ball" }
-    Ball-- coordinate changes -->BallCoordinatesTopic@{ shape: das, label: "coordinates:ball" }
+    HordeSupervisor1([HordeSupervisor]) -- schedules start of --> Ball
+    Ball["Ball (singleton)"]-- publishes state changes to -->BallStateTopic@{ shape: das, label: "state:ball" }
+    %% Ball-- updates -->BallUpdatesTopic@{ shape: das, label: "updates:ball" }
+    Ball-- publishes changes to -->BallCoordinatesTopic@{ shape: das, label: "coordinates:ball, updates:ball" }
     StateGuardian1[StateGuardian] -- subscribed to --> BallStateTopic
+    Ball -. restores state from .-> StateGuardian1 
+    LiveView1@{ shape: manual-input, label: "LiveView"} -- subscribed to --> BallCoordinatesTopic
     end
     subgraph Replica1
-    StateGuardian2[StateGuardian] -- subscribed to --> BallStateTopic
+    StateGuardian2[StateGuardian] --> BallStateTopic
+    HordeSupervisor2([HordeSupervisor]) ---  HordeSupervisor1
+    LiveView2@{ shape: manual-input, label: "LiveView"} --> BallCoordinatesTopic
     end
 ```
 
