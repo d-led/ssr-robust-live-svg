@@ -105,7 +105,7 @@ flowchart TB
     User2["fa:fa-user"] -- interacts with --> LiveView1
     subgraph Replica2
     HordeSupervisor1([HordeSupervisor]) -- schedules start of --> Ball
-    Ball["Ball (singleton)"]-- publishes state changes to -->BallStateTopic@{ shape: das, label: "state:ball" }
+    Ball(("Ball (singleton)"))-- publishes state changes to -->BallStateTopic@{ shape: das, label: "state:ball" }
     %% Ball-- updates -->BallUpdatesTopic@{ shape: das, label: "updates:ball" }
     Ball-- publishes changes to -->BallCoordinatesTopic@{ shape: das, label: "coordinates:ball, updates:ball" }
     StateGuardian1[StateGuardian] -- subscribed to --> BallStateTopic
