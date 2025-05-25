@@ -227,7 +227,6 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
             <svg
               viewBox={"0 0 #{@width} #{@height}"}
               width="100%"
-              height="auto"
               style="border: 0.5px solid black; display: block; aspect-ratio: #{@width}/#{@height};"
             >
               <.circle cx={@cx} cy={@cy} r={@radius} />
