@@ -37,7 +37,13 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
     {cx, cy} = Ball.get_coordinates()
     movement_mod = Ball.get_movement_module()
 
-    %{node: node, version: version, machine_id: machine_id, other_nodes: other_nodes, ball_node: ball_node} =
+    %{
+      node: node,
+      version: version,
+      machine_id: machine_id,
+      other_nodes: other_nodes,
+      ball_node: ball_node
+    } =
       SsrRobustLiveSvg.ClusterInfoServer.get_cluster_info()
 
     now_online_count = SsrRobustLiveSvgWeb.Presence.list(@presence_topic) |> map_size()
@@ -118,11 +124,23 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
 
   def handle_info(
         {:cluster_info,
-         %{node: node, version: version, machine_id: machine_id, other_nodes: other_nodes, ball_node: ball_node}},
+         %{
+           node: node,
+           version: version,
+           machine_id: machine_id,
+           other_nodes: other_nodes,
+           ball_node: ball_node
+         }},
         socket
       ) do
     {:noreply,
-     assign(socket, node: node, version: version, machine_id: machine_id, other_nodes: other_nodes, ball_node: ball_node)}
+     assign(socket,
+       node: node,
+       version: version,
+       machine_id: machine_id,
+       other_nodes: other_nodes,
+       ball_node: ball_node
+     )}
   end
 
   def handle_event("set_movement", %{"movement" => movement}, socket) do
@@ -173,10 +191,9 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
       schedule_alert_removal(id)
 
       {:noreply,
-        socket
-        |> assign(kill_attempts: kill_attempts)
-        |> update(:alerts, &[alert | &1])
-      }
+       socket
+       |> assign(kill_attempts: kill_attempts)
+       |> update(:alerts, &[alert | &1])}
     else
       {:noreply, assign(socket, kill_attempts: kill_attempts)}
     end
