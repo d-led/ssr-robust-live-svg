@@ -36,6 +36,7 @@ defmodule SsrRobustLiveSvg.ClusterInfoServer do
   defp fetch_cluster_info do
     node = Node.self()
     version = SsrRobustLiveSvg.VersionServer.get_version()
+    machine_id = Application.get_env(:ssr_robust_live_svg, :machine_id)
 
     other_nodes =
       Node.list()
@@ -47,10 +48,16 @@ defmodule SsrRobustLiveSvg.ClusterInfoServer do
             v -> v
           end
 
-        {n, v}
+        m_id =
+          :rpc.call(n, Application, :get_env, [:ssr_robust_live_svg, :machine_id])
+          |> case do
+            {:badrpc, _} -> nil
+            m_id -> m_id
+          end
+
+        %{node: n, version: v, machine_id: m_id}
       end)
 
-    # Query Horde for Ball location
     ball_node =
       case Horde.Registry.lookup(
              SsrRobustLiveSvg.HordeRegistry,
@@ -60,12 +67,10 @@ defmodule SsrRobustLiveSvg.ClusterInfoServer do
         [] -> :not_found
       end
 
-    # |> IO.inspect(label: "Ball node")
-    # Horde.Registry.select(SsrRobustLiveSvg.HordeRegistry, [{{:"$1", :_, :_}, [], [:"$1"]}]) |> IO.inspect(label: "all processes")
-
     %{
       node: node,
       version: version,
+      machine_id: machine_id,
       other_nodes: other_nodes,
       ball_node: ball_node
     }

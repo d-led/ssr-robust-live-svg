@@ -37,7 +37,7 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
     {cx, cy} = Ball.get_coordinates()
     movement_mod = Ball.get_movement_module()
 
-    %{node: node, version: version, other_nodes: other_nodes, ball_node: ball_node} =
+    %{node: node, version: version, machine_id: machine_id, other_nodes: other_nodes, ball_node: ball_node} =
       SsrRobustLiveSvg.ClusterInfoServer.get_cluster_info()
 
     now_online_count = SsrRobustLiveSvgWeb.Presence.list(@presence_topic) |> map_size()
@@ -54,6 +54,7 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
        alerts: [],
        node: node,
        version: version,
+       machine_id: machine_id,
        other_nodes: other_nodes,
        ball_node: ball_node,
        kill_attempts: %{},
@@ -117,11 +118,11 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
 
   def handle_info(
         {:cluster_info,
-         %{node: node, version: version, other_nodes: other_nodes, ball_node: ball_node}},
+         %{node: node, version: version, machine_id: machine_id, other_nodes: other_nodes, ball_node: ball_node}},
         socket
       ) do
     {:noreply,
-     assign(socket, node: node, version: version, other_nodes: other_nodes, ball_node: ball_node)}
+     assign(socket, node: node, version: version, machine_id: machine_id, other_nodes: other_nodes, ball_node: ball_node)}
   end
 
   def handle_event("set_movement", %{"movement" => movement}, socket) do
@@ -204,26 +205,38 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
           <span class="badge badge-info font-bold flex items-center gap-2">
             <strong>
               <span>
-                {@version}@{node_name(@node)}
+                {@version}@{node_name(%{machine_id: @machine_id, node: @node})}
               </span>
             </strong>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              style="display:inline-block;vertical-align:middle;"
-            >
-              <.circle cx="12" cy="12" r="8" fill="white" />
-            </svg>
+            <%= if @node == @ball_node do %>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                style="display:inline-block;vertical-align:middle;"
+              >
+                <.circle cx="12" cy="12" r="8" fill="white" stroke="black" />
+              </svg>
+            <% end %>
           </span>
-          <%= for {node, version} <- @other_nodes do %>
+          <%= for node_info <- @other_nodes do %>
             <span class="badge badge-outline flex items-center">
               <span>
-                {version}@{node_name(node)}
+                {node_info.version}@{node_name(node_info)}
               </span>
+              <%= if node_info.node == @ball_node do %>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  style="display:inline-block;vertical-align:middle;"
+                >
+                  <.circle cx="12" cy="12" r="8" fill="white" stroke="black" />
+                </svg>
+              <% end %>
               <button
                 phx-click="kill_node"
-                phx-value-node={to_string(node)}
+                phx-value-node={to_string(node_info.node)}
                 class="btn btn-ghost btn-xs ml-1"
                 title="Kill node"
                 style="padding:0 0.2em;vertical-align:middle;"
@@ -285,7 +298,15 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
     Process.send_after(self(), {:remove_alert, id}, 2_000)
   end
 
-  defp node_name(node) do
+  defp node_name(%{machine_id: machine_id}) when is_binary(machine_id) and machine_id != "" do
+    if String.length(machine_id) > 20 do
+      String.slice(machine_id, 0, 20)
+    else
+      machine_id
+    end
+  end
+
+  defp node_name(%{node: node}) do
     node
     |> to_string()
     |> String.split("@")

@@ -36,6 +36,17 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "localhost"
   port = String.to_integer(System.get_env("PORT") || "4000")
   context_path = System.get_env("CONTEXT_PATH") || ""
+  machine_id = System.get_env("FLY_MACHINE_ID")
+  machine_region = System.get_env("FLY_REGION")
+
+  machine_id =
+    if machine_id && machine_region do
+      "#{machine_id}-#{machine_region}"
+    else
+      nil
+    end
+
+  config :ssr_robust_live_svg, :machine_id, machine_id
 
   config :ssr_robust_live_svg, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
