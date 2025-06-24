@@ -12,15 +12,21 @@ processes:
     working_dir: "./"
     environment:
       - "PORT=4000"
+      - "FLY_MACHINE_ID=node1"
+      - "FLY_REGION=local"
 
   node2:
     command: "elixir --name node2@127.0.0.1 -S mix phx.server"
     working_dir: "./"
     environment:
       - "PORT=4001"
+      - "FLY_MACHINE_ID=node2"
+      - "FLY_REGION=local"
 
   node3:
     command: "elixir --name node3@127.0.0.1 -S mix phx.server"
     working_dir: "./"
     environment:
       - "PORT=4002"
+      - "FLY_MACHINE_ID=node3"
+      - "FLY_REGION=local"
