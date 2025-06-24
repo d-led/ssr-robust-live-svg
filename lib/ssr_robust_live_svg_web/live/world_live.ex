@@ -201,12 +201,20 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
           class="flex gap-2 flex-wrap py-2 px-2"
           style="min-height: 5rem; border: 0.5px solid black;"
         >
-          <span class="badge badge-info font-bold">
+          <span class="badge badge-info font-bold flex items-center gap-2">
             <strong>
               <span>
                 {@version}@{node_name(@node)}
               </span>
             </strong>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              style="display:inline-block;vertical-align:middle;"
+            >
+              <.circle cx="12" cy="12" r="8" fill="white" />
+            </svg>
           </span>
           <%= for {node, version} <- @other_nodes do %>
             <span class="badge badge-outline flex items-center">
@@ -239,11 +247,6 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
               </button>
             </span>
           <% end %>
-          <span class="badge badge-soft badge-info">
-            <span>
-              Ball@{node_name(@ball_node)}
-            </span>
-          </span>
           <span class="badge badge-success">
             <span>
               Users online: {@now_online_count}
