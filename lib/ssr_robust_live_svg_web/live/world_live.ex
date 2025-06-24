@@ -166,7 +166,17 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
       # reset attempts after ok
       kill_attempts = Map.delete(kill_attempts, node)
       :rpc.cast(node, SsrRobustLiveSvg.NodeKillSwitch, :kill_node, [1])
-      {:noreply, assign(socket, kill_attempts: kill_attempts)}
+
+      # Show info banner (simplified)
+      id = System.unique_integer([:positive])
+      alert = %{id: id, type: :info, msg: "deliberate node crash requested"}
+      schedule_alert_removal(id)
+
+      {:noreply,
+        socket
+        |> assign(kill_attempts: kill_attempts)
+        |> update(:alerts, &[alert | &1])
+      }
     else
       {:noreply, assign(socket, kill_attempts: kill_attempts)}
     end
