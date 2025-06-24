@@ -290,14 +290,14 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
       [first, second] ->
         short_first =
           if String.length(first) > 8 do
-            String.slice(first, 0, 8) <> "…"
+            String.slice(first, 0, 8)
           else
             first
           end
 
         short_second =
           if String.length(second) > 8 do
-            "…" <> String.slice(second, -8, 8)
+            String.slice(second, -8, 8)
           else
             second
           end
@@ -306,7 +306,7 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
 
       [single] ->
         if String.length(single) > 16 do
-          String.slice(single, 0, 16) <> "…"
+          String.slice(single, 0, 16)
         else
           single
         end
