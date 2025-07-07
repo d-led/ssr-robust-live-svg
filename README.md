@@ -83,7 +83,7 @@ scripts/run-two-versions.sh
 
 https://github.com/user-attachments/assets/74c801ec-ae66-44a0-80f5-43b5cebf35bb
 
-[link](./doc/vid/node-crash-ball-reschedule.mp4)
+[link](./docs/vid/node-crash-ball-reschedule.mp4)
 
 ## Architecture
 
