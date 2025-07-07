@@ -79,6 +79,11 @@ scripts/run-two-versions.sh
 
 ![hot code update demo](./docs/img/svg-ssr-ball-demo-hot-code-upgrade.gif)
 
+### Seamless Simulation With a Whole Node Failing
+
+https://github.com/user-attachments/assets/74c801ec-ae66-44a0-80f5-43b5cebf35bb
+
+[link](./doc/vid/node-crash-ball-reschedule.mp4)
 
 ## Architecture
 
