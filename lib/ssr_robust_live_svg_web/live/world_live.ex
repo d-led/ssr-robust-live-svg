@@ -110,10 +110,16 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
     {:noreply, update(socket, :alerts, &[alert | &1])}
   end
 
-  def handle_info({:ball_behavior_changed_to, mod}, socket) do
+  def handle_info({:ball_behavior_changed_to, mod, ball_node}, socket) do
     id = System.unique_integer([:positive])
     mod_name = mod |> Module.split() |> List.last()
-    alert = %{id: id, type: :info, msg: "Ball behavior changed to #{mod_name}"}
+
+    alert = %{
+      id: id,
+      type: :info,
+      msg: "Ball behavior changed to #{mod_name}, running on #{Atom.to_string(ball_node)}"
+    }
+
     schedule_alert_removal(id)
 
     socket =
@@ -362,7 +368,7 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
   end
 
   defp schedule_alert_removal(id) do
-    Process.send_after(self(), {:remove_alert, id}, 2_000)
+    Process.send_after(self(), {:remove_alert, id}, 3_000)
   end
 
   defp node_name(%{machine_id: machine_id}) when is_binary(machine_id) and machine_id != "" do

@@ -19,8 +19,7 @@ version = Application.spec(:ssr_robust_live_svg, :vsn) |> to_string()
 available_ball_behaviors =
   [
     SsrRobustLiveSvg.MirrorJump,
-    SsrRobustLiveSvg.RandomRebound,
-    SsrRobustLiveSvg.NonExistentBehavior
+    SsrRobustLiveSvg.RandomRebound
   ] ++
     if version == "0.1.1", do: [SsrRobustLiveSvg.RandomReboundV2NonSticky], else: []
 

@@ -29,7 +29,7 @@ defmodule SsrRobustLiveSvg.Ball do
 
         schedule_tick(interval)
 
-        publish_update({:ball_behavior_changed_to, movement_mod})
+        publish_update({:ball_behavior_changed_to, movement_mod, Node.self()})
 
         {:ok, state}
 
@@ -40,7 +40,9 @@ defmodule SsrRobustLiveSvg.Ball do
 
         publish_update({:ball_state_restored, restored_state.last_good_movement_module})
 
-        publish_update({:ball_behavior_changed_to, restored_state.last_good_movement_module})
+        publish_update(
+          {:ball_behavior_changed_to, restored_state.last_good_movement_module, Node.self()}
+        )
 
         {:ok, restored_state}
     end
@@ -94,7 +96,7 @@ defmodule SsrRobustLiveSvg.Ball do
     }
 
     # if we're still alive, broadcast the new movement module
-    publish_update({:ball_behavior_changed_to, new_movement_module})
+    publish_update({:ball_behavior_changed_to, new_movement_module, Node.self()})
 
     {:noreply, new_state}
   end

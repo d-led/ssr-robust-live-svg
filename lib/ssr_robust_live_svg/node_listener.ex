@@ -22,8 +22,8 @@ defmodule SsrRobustLiveSvg.NodeListener do
     {:noreply, state}
   end
 
-  def handle_info({:got_module, module_name, object_code}, state) do
-    SsrRobustLiveSvg.BehaviorModules.incoming_module(module_name, object_code)
+  def handle_info({:got_module, from_node, module_name, object_code}, state) do
+    SsrRobustLiveSvg.BehaviorModules.incoming_module(from_node, module_name, object_code)
     {:noreply, state}
   end
 end
