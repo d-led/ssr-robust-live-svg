@@ -13,6 +13,8 @@ defmodule SsrRobustLiveSvg.Application do
 
     children = [
       SsrRobustLiveSvgWeb.Telemetry,
+      {SsrRobustLiveSvg.BehaviorModules,
+       Application.get_env(:ssr_robust_live_svg, :available_ball_behaviors, [])},
       {DNSCluster,
        query: Application.get_env(:ssr_robust_live_svg, :dns_cluster_query) || :ignore},
       {Cluster.Supervisor, [topologies() |> IO.inspect(label: "chosen cluster config")]},
@@ -62,6 +64,7 @@ defmodule SsrRobustLiveSvg.Application do
              end
            ]}
       },
+      SsrRobustLiveSvg.NodeListener,
       SsrRobustLiveSvgWeb.Endpoint
     ]
 

@@ -65,8 +65,11 @@ defmodule SsrRobustLiveSvg.Ball do
 
   # Callbacks
 
-  def handle_info(:tick, %{movement: movement} = state) do
-    {cx, cy, dx, dy} = BallMovement.move(movement, state)
+  def handle_info(
+        :tick,
+        %{movement: movement, last_good_movement_module: last_good_movement_module} = state
+      ) do
+    {cx, cy, dx, dy} = apply(last_good_movement_module, :move, [movement, state])
     new_state = %{state | cx: cx, cy: cy, dx: dx, dy: dy}
     publish_coordinates(cx, cy)
     publish_state_to_later_restore(new_state)

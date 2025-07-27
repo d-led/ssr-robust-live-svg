@@ -16,14 +16,19 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
     height = Keyword.get(config, :height)
     radius = Keyword.get(config, :radius)
 
-    available_ball_behaviors =
-      Application.get_env(:ssr_robust_live_svg, :available_ball_behaviors)
+    {available_ball_behaviors, new_modules_local} =
+      case SsrRobustLiveSvg.BehaviorModules.get_all_available_modules() do
+        {my_modules, new_modules} -> {my_modules, new_modules}
+        # fallback for old API, should not happen
+        mods when is_list(mods) -> {mods, []}
+      end
 
     if connected?(socket) do
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "coordinates:ball")
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "updates:ball")
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "updates:cluster")
       Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, @presence_topic)
+      Phoenix.PubSub.subscribe(SsrRobustLiveSvg.PubSub, "modules:new:local")
 
       SsrRobustLiveSvgWeb.Presence.track(
         self(),
@@ -64,7 +69,8 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
        other_nodes: other_nodes,
        ball_node: ball_node,
        kill_attempts: %{},
-       now_online_count: now_online_count
+       now_online_count: now_online_count,
+       new_modules_local: new_modules_local
      )}
   end
 
@@ -143,8 +149,31 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
      )}
   end
 
+  def handle_info({:new_module_local, module_name}, socket) do
+    new_modules = socket.assigns.new_modules_local
+
+    if module_name in new_modules do
+      {:noreply, socket}
+    else
+      # Also refresh available_ball_behaviors and new_modules_local from BehaviorModules
+      {available_ball_behaviors, new_modules_local} =
+        case SsrRobustLiveSvg.BehaviorModules.get_all_available_modules() do
+          {my_modules, new_modules} -> {my_modules, new_modules}
+          mods when is_list(mods) -> {mods, []}
+        end
+
+      {:noreply,
+       socket
+       |> assign(
+         available_ball_behaviors: available_ball_behaviors,
+         new_modules_local: new_modules_local
+       )}
+    end
+  end
+
   def handle_event("set_movement", %{"movement" => movement}, socket) do
-    available = socket.assigns.available_ball_behaviors
+    available =
+      socket.assigns.available_ball_behaviors ++ socket.assigns.new_modules_local
 
     movement = movement |> String.to_existing_atom()
 
@@ -215,6 +244,17 @@ defmodule SsrRobustLiveSvgWeb.WorldLive do
                 class={"btn btn-primary btn-sm" <> if(@movement == mod, do: " btn-disabled", else: "")}
               >
                 {mod_name}
+              </button>
+            <% end %>
+            <%= for mod <- @new_modules_local do %>
+              <% mod_name = mod |> Module.split() |> List.last() %>
+              <button
+                phx-click="set_movement"
+                phx-value-movement={mod}
+                disabled={@movement == mod}
+                class={"btn btn-info btn-sm" <> if(@movement == mod, do: " btn-disabled", else: "")}
+              >
+                new: {mod_name}
               </button>
             <% end %>
           </div>
