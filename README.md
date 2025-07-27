@@ -97,6 +97,7 @@ https://github.com/user-attachments/assets/74c801ec-ae66-44a0-80f5-43b5cebf35bb
 - when the ball starts, it may load its state from the `StateGuardian`
 - the svg is rendered as a live view template, updating its position only
 - the list of nodes is updated periodically by [`ClusterInfoServer`](./lib/ssr_robust_live_svg/cluster_info_server.ex)
+- upon start (with a short delay), and on [detection of a new node by `NodeListener`](./lib/ssr_robust_live_svg/node_listener.ex), the compiled modules configured on one node are spread to other nodes via [`BehaviorModules`](./lib/ssr_robust_live_svg/behavior_modules.ex). Pre-requisite: the module doesn't depend on modules not present on other nodes.
 
 ## Details
 
@@ -139,7 +140,10 @@ flowchart TB
 
 ## More Failure Modes
 
-- if the last known state has been a new module, downgrading will lead to a system failure
+- If the last known state has been a new module, downgrading will lead to a system failure,
+  unless the module has already been distributed by `BehaviorModules` to the node that starts the ball.
+  `last_known_good_module` cannot be relied upon, and some other behavior like a default behavior module
+  or a stack of last known good modules can be designed.
 
 ## Well-Known Patterns Identifiable in the Demo
 
