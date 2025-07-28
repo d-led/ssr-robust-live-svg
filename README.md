@@ -149,3 +149,7 @@ flowchart TB
 
 - [Decoupling deployment from release](https://www.thoughtworks.com/en-de/radar/techniques/decoupling-deployment-from-release)
 - Keeping the state of a process outside of it (e.g. in another, logic-less process)
+- "The generic component should hide details of concurrency and mechanisms for fault-tolerance from the
+  plugins. The plugins should be written using only sequential code with well-defined types."
+  - [Joe Armstrong's PhD Thesis](https://erlang.org/download/armstrong_thesis_2003.pdf)
+    "Making reliable distributed systems in the presence of software errors"
