@@ -57,6 +57,8 @@ process-compose
 
 - use [`process-compose`](https://github.com/F1bonacc1/process-compose) to start 3 nodes locally &rarr; (additional node ports: `4001`, `4002`)
 
+To crash a node: triple click on an `x`.
+
 ### Hot Code Updates
 
 - the demo fix: the new version contains a new ball movement module: [`RandomReboundV2NonSticky`](./lib/ssr_robust_live_svg/actor_behaviors/random_rebound_v2_non_sticky.ex)
