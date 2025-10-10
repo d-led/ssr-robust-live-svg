@@ -25,6 +25,7 @@
 - it is expected that the ball continues the movement without a noticeable interruption as long there's one machine available
 
 ![demo](./docs/img/svg-ssr-ball-demo.gif)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fd-led%2Fssr-robust-live-svg.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fd-led%2Fssr-robust-live-svg?ref=badge_shield)
 
 ## How to Run
 
@@ -155,3 +156,6 @@ flowchart TB
   plugins. The plugins should be written using only sequential code with well-defined types."
   - [Joe Armstrong's PhD Thesis](https://erlang.org/download/armstrong_thesis_2003.pdf)
     "Making reliable distributed systems in the presence of software errors"
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fd-led%2Fssr-robust-live-svg.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fd-led%2Fssr-robust-live-svg?ref=badge_large)
