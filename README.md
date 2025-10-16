@@ -1,10 +1,5 @@
 # Robust SVG-based Live View Animated
 
-## Disclaimer
-
-- **demoware**
-- built with assistance of [GitHub Copilot](https://github.com/features/copilot)
-
 ## Motivation
 
 - practice patterns for SVG animation on the server
@@ -157,5 +152,12 @@ flowchart TB
   - [Joe Armstrong's PhD Thesis](https://erlang.org/download/armstrong_thesis_2003.pdf)
     "Making reliable distributed systems in the presence of software errors"
 
+## Disclaimer
+
+- **vibeware**
+- built with assistance of [GitHub Copilot](https://github.com/features/copilot)
+
+
 ## License
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fd-led%2Fssr-robust-live-svg.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fd-led%2Fssr-robust-live-svg?ref=badge_large)
